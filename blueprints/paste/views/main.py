@@ -15,6 +15,9 @@ class PasteForm(Form):
     text = TextAreaField('Paste Here', validators=[Required()])
     expiration = SelectField('Expiration', choices=[('0', 'Never'), ('1', 'Fifteen Minutes'), ('2', 'Thirty Minutes'), ('3', 'One Hour'), ('4', 'Six Hours'), ('5', 'One Day')])
 
+@blueprint.route('/')
+def main():
+    return render_template('index.html', title='zifb.in')
 @blueprint.route('/new', methods=('POST', 'GET'))
 def new():
     form = PasteForm(request.form)

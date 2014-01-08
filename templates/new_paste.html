@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
 {% block body %}
-<fieldset>
     <form action="" method="post">
+        {% for error_field in form.errors.values() %}
+        {%- for error in error_field %}
+        <div class="alert-box alert radius" data-alert>
+            {{ error }}
+            <a href="#" class="close">&times;</a>
+        </div>
 
         {{ form.hidden_tag() }}
         {{ form.text(placeholder=form.text.label.text) }}
         {{ form.expiration(placeholder=form.expiration.label.text) }}
         <button type="submit">Paste</button>
     </form>
-</fieldset>
 {% endblock %}

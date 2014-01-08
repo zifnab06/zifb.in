@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
-{% from "_formhelpers.html" import render_field %}
 {% block body %}
-<fieldset>
     <h4>Register</h4>
     <hr>
     <form action="" method="post">
@@ -24,5 +22,4 @@
         <br/>
         {#<label>Forgot your password? <a href="{{url_for('auth.pwreset')}}">Reset it.</a></label>#}
     </form>
-</fieldset>
 {% endblock %}

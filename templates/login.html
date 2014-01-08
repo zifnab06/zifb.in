@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% block body %}
-<fieldset>
     <h4>Log In</h4>
     <hr>
     <form action="" method="post">
@@ -24,5 +23,4 @@
         <label>Don't have an account? <a href="{{url_for('auth.register')}}">Create one.</a></label>
         {#<label>Forgot your password? <a href="{{url_for('auth.pwreset')}}">Reset it.</a></label>#}
     </form>
-</fieldset>
 {% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block body %}
+<fieldset>
+    <form action="" method="post">
+
+        {{ form.hidden_tag() }}
+        {{ form.text(placeholder=form.text.label.text) }}
+        {{ form.expiration(placeholder=form.expiration.label.text) }}
+        <button type="submit">Paste</button>
+    </form>
+</fieldset>
+{% endblock %}

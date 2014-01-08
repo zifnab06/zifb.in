@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block body %}
+<fieldset>
+    <h4>Log In</h4>
+    <hr>
+    <form action="" method="post">
+        {% for error_field in form.errors.values() %}
+        {%- for error in error_field %}
+        <div class="alert-box alert radius" data-alert>
+            {{ error }}
+            <a href="#" class="close">&times;</a>
+        </div>
+        {%- endfor %}
+        {%- endfor %}
+        {{ form.hidden_tag() }}
+        {{ form.username(placeholder=form.username.label.text) }}
+        {{ form.password(placeholder=form.password.label.text) }}
+
+        <label class="checkbox">
+            {{ form.remember() }} {{ form.remember.label.text }}
+        </label>
+        <button type="submit">Log in</button>
+        <br/>
+        <label>Don't have an account? <a href="{{url_for('auth.register')}}">Create one.</a></label>
+        {#<label>Forgot your password? <a href="{{url_for('auth.pwreset')}}">Reset it.</a></label>#}
+    </form>
+</fieldset>
+{% endblock %}

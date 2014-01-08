@@ -1,0 +1,10 @@
+Flask
+Flask-Admin
+Flask-Assets
+Flask-Script
+Flask-mongoengine
+Flask-WTF
+Flask-DebugToolbar
+Flask-Login
+mongoengine
+passlib

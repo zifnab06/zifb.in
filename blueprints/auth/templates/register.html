@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% from "_formhelpers.html" import render_field %}
+{% block body %}
+<fieldset>
+    <h4>Register</h4>
+    <hr>
+    <form action="" method="post">
+        {% for error_field in form.errors.values() %}
+        {%- for error in error_field %}
+        <div class="alert-box alert radius" data-alert>
+            {{ error }}
+            <a href="#" class="close">&times;</a>
+        </div>
+        {%- endfor %}
+        {%- endfor %}
+        {{ form.hidden_tag() }}
+        {{ form.username(placeholder=form.username.label.text) }}
+        {{ form.email(placeholder=form.email.label.text) }}
+        {{ form.password(placeholder=form.password.label.text) }}
+        {{ form.password2(placeholder=form.password2.label.text) }}
+
+
+        <button type="submit">Register</button>
+        <br/>
+        {#<label>Forgot your password? <a href="{{url_for('auth.pwreset')}}">Reset it.</a></label>#}
+    </form>
+</fieldset>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block body %}
+<fieldset>
+    <ul>
+        <li>{{paste.time}}</li>
+        {% if paste.user.username is defined %}
+        <li>{{paste.user.username}}</li>
+        {% endif %}
+    </ul>
+    {{paste.paste}}
+</fieldset>
+{% endblock %}

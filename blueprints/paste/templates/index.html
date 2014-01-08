@@ -2,7 +2,9 @@
 {% block body %}
 <fieldset>
     {% if current_user.is_authenticated() %}
-    welcome back!
+    welcome back! <a href="{{url_for('paste.new')}}">New paste</a>
+    {% else %}
+    welcome! <a href="{{url_for('paste.new')}}">New paste</a>
     {% endif %}
 </fieldset>
 {% endblock %}

@@ -76,6 +76,8 @@ with app.app_context():
         elif paste.expire is not None and arrow.get(paste.expire) < arrow.utcnow():
             abort(404)
         else:
+            paste.views = paste.views + 1
+            paste.save()
             return render_template("paste.html", paste=paste, title=paste.id)
 
 

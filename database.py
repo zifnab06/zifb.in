@@ -3,7 +3,7 @@ __author__ = 'zifnab'
 from datetime import datetime
 
 from mongoengine import Document
-from mongoengine import StringField, DateTimeField, ReferenceField
+from mongoengine import StringField, DateTimeField, ReferenceField, IntField
 from flask_login import UserMixin
 
 from util import random_string
@@ -38,5 +38,6 @@ class Paste(Document):
     time = DateTimeField(required=True, default=datetime.utcnow())
     expire = DateTimeField(required=False)
     user = ReferenceField(User, required=False)
+    views = IntField(required=False, default=0)
 
 

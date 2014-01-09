@@ -71,6 +71,7 @@ def login():
     if request.method == 'POST' and form.validate():
         user = form.user
         login_user(user, remember=form.remember)
+        return redirect('/')
     return render_template('login.html', form=form, title='Login')
 
 @app.route('/auth/logout')

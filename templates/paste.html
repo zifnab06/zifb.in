@@ -1,10 +1,18 @@
 {% extends 'base.html' %}
+{% block topbar %}
+<li><a>Date: {{paste.time}}</a></li>
+{% if paste.user.username is defined %}
+<li><a>User: {{paste.user.username}}</a></li>
+{% endif %}
+<li><a>ID: {{paste.name}}</a></li>
+{% endblock %}
 {% block body %}
-    <ul>
-        <li>{{paste.time}}</li>
-        {% if paste.user.username is defined %}
-        <li>{{paste.user.username}}</li>
-        {% endif %}
-    </ul>
-    {{paste.paste}}
+<div class="pure-g-r">
+    <div class="pure-u-1-5"></div>
+    <div class="pure-u-3-5">
+        <pre>{{paste.paste}}</pre>
+    </div>
+    <div class="pure-u-1-5"></div>
+</div>
+
 {% endblock %}

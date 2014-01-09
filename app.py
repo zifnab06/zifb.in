@@ -31,7 +31,12 @@ with app.app_context():
 
     class PasteForm(Form):
         text = TextAreaField('Paste Here', validators=[Required()])
-        expiration = SelectField('Expiration', choices=[('0', 'Never'), ('1', 'Fifteen Minutes'), ('2', 'Thirty Minutes'), ('3', 'One Hour'), ('4', 'Six Hours'), ('5', 'One Day')])
+        expiration = SelectField('Expiration', choices=[('0', 'Expires Never'),
+                                                        ('1', 'Expires In Fifteen Minutes'),
+                                                        ('2', 'Expires In Thirty Minutes'),
+                                                        ('3', 'Expires In One Hour'),
+                                                        ('4', 'Expires In Six Hours'),
+                                                        ('5', 'Expires In One Day')], default='3')
 
     @app.route('/', methods=('POST', 'GET'))
     @app.route('/new', methods=('POST', 'GET'))

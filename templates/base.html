@@ -26,14 +26,13 @@
         <div class="pure-menu pure-menu-open pure-menu-horizontal">
             <ul>
                 <li><a href="{{ url_for('main') }}">zifb.in</a></li>
-                {% if current_user.is_authenticated() %}
                 {#
                 <li><a href="{{ url_for('new') }}">My Pastes (NYI)</a></li>
                 #}
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
-                {% endif %}
                 {% block topbar%} {% endblock %}
-                {% if not current_user.is_authenticated() %}
+                {% if current_user.is_authenticated() %}
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                {% else %}
                 <li><a href="{{ url_for('login') }}">Login</a></li>
                 {% endif %}
             </ul>

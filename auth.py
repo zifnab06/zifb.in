@@ -7,7 +7,7 @@ from database import User
 
 from wtforms.fields import StringField, BooleanField, PasswordField
 from wtforms.validators import Required, Length, EqualTo, Email
-from util import authenticate_user, create_user
+from util import authenticate_user, create_user, lookup_user
 
 login_manager = LoginManager(app)
 
@@ -51,6 +51,17 @@ class RegForm(Form):
         else:
             self.username.errors.append("Username is already taken - try again")
             return False
+class ForgotPasswordForm(Form):
+    username = RegForm.username
+    def validate(self):
+        user = lookup_user(self.username.data)
+        if user is None:
+            self.username.errors.append("Username does not exist")
+            return False
+        if user.email is None:
+            self.username.errors.append("No email on file, cannot be recovered")
+            return False
+        return True
 
 @app.route('/auth/login', methods=('POST', 'GET'))
 def login():
@@ -77,5 +88,13 @@ def register():
         flash('Thanks for registering!')
         return redirect('/')
     return render_template('register.html', form=form, title='Register')
+#@app.route('/auth/forgotpassword', methods=('POST', 'GET'))
+def pwreset():
+    form = ForgotPasswordForm(request.form)
+    if request.method == 'POST' and form.validate():
+        #Email Link to reset password
+        pass
 
 
+    return render_template('pwreset.html', form=form, title='Forgot Passowrd')
+    pass

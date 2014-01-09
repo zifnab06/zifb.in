@@ -47,8 +47,6 @@ with app.app_context():
                 '4':{'hours':+6},
                 '5':{'days':+1}
             }
-            print form.expiration.data
-            print times.get(form.expiration.data)
             paste = database.Paste(paste=form.text.data)
             if (current_user.is_authenticated()):
                 paste.user = current_user.to_dbref()
@@ -64,7 +62,7 @@ with app.app_context():
         paste = database.Paste.objects(name__exact=id).first()
         if paste is None:
             abort(404)
-        elif arrow.get(paste.expire) < arrow.utcnow():
+        elif paste.expire is not None and arrow.get(paste.expire) < arrow.utcnow():
             abort(404)
         else:
             return render_template("paste.html", paste=paste, title=paste.id)

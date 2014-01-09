@@ -1,14 +1,16 @@
 __author__ = 'zifnab'
 from app import admin
 from database import User, Paste
-from flask import abort
+from flask import abort, current_app
 from flask_admin.contrib import mongoengine
 from flask_admin import AdminIndexView
 from flask_login import current_user
 
 
 def is_admin():
-    if (current_user.is_anonymous()):
+    if current_app.config['DEBUG']:
+        return True
+    elif (current_user.is_anonymous()):
         abort(403)
     else:
         return current_user.username == 'zif'

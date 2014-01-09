@@ -7,6 +7,8 @@
             {{ error }}
             <a href="#" class="close">&times;</a>
         </div>
+        {% endfor %}
+        {% endfor %}
 
         {{ form.hidden_tag() }}
         {{ form.text(placeholder=form.text.label.text) }}

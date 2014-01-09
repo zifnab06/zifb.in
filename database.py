@@ -33,9 +33,9 @@ class User(Document, UserMixin, object):
 
 
 class Paste(Document):
-    name = StringField(required=True, default=random_string())
+    name = StringField(required=True, )
     paste = StringField(required=True)
-    time = DateTimeField(required=True, default=datetime.utcnow)
+    time = DateTimeField(required=True, default=datetime.utcnow())
     expire = DateTimeField(required=False)
     user = ReferenceField(User, required=False)
 

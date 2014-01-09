@@ -70,7 +70,7 @@ def login():
         return redirect('/')
     if request.method == 'POST' and form.validate():
         user = form.user
-        login_user(user, remember=form.remember)
+        login_user(user, remember=form.remember.data)
         return redirect('/')
     return render_template('login.html', form=form, title='Login')
 

@@ -56,6 +56,12 @@ with app.app_context():
             if (current_user.is_authenticated()):
                 paste.user = current_user.to_dbref()
             paste.name = random_string()
+
+            collision_check = database.Paste.objects(name__exact=paste.name).first()
+            while collision_check is not None:
+                paste.name = random_string()
+                collision_check = database.Paste.objects(name__exact=paste.name).first()
+
             if times.get(form.expiration.data) is not None:
                 paste.expire = arrow.utcnow().replace(**times.get(form.expiration.data)).datetime
             paste.save()

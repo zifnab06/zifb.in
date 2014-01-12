@@ -17,14 +17,14 @@
             {{ form.hidden_tag() }}
             <fieldset class="pure-group">
                 {{ form.username(placeholder=form.username.label.text, class="pure-input-1") }}
-                {{ form.email(placeholder=form.email.label.text, class="pure-input-1", type='email', required='') }}
+                {{ form.email(placeholder=form.email.label.text, class="pure-input-1", type='email') }}
             </fieldset>
             <fieldset class="pure-group">
                 {{ form.password(placeholder=form.password.label.text, class="pure-input-1") }}
                 {{ form.password2(placeholder=form.password2.label.text, class="pure-input-1") }}
             </fieldset>
 
-
+                {{ form.recaptcha }}
             <button type="submit" class="pure-button pure-button-primary pure-input-1">Register</button>
             <br/>
             {#<label>Forgot your password? <a href="{{url_for('pwreset')}}">Reset it.</a></label>#}

@@ -26,6 +26,10 @@
                 <option value="4">Expires In Six Hours</option>
                 <option value="5">Expires In One Day</option>
             </select>
+
+            {% if not current_user.is_authenticated() %}
+            {{ form.recaptcha }}
+            {% endif %}
             <button type="submit" class="pure-button pure-button-primary pure-input-1">Paste</button>
         </form>
     </div>

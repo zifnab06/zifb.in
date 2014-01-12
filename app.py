@@ -4,7 +4,7 @@ from mongoengine import connect
 from flask_admin import Admin
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from flask_wtf import Form
+from flask_wtf import Form, RecaptchaField
 from wtforms.fields import *
 from wtforms.validators import *
 from passlib.hash import sha512_crypt
@@ -37,11 +37,16 @@ with app.app_context():
                                                         ('3', 'Expires In One Hour'),
                                                         ('4', 'Expires In Six Hours'),
                                                         ('5', 'Expires In One Day')], default='3')
+    class PasteFormRecaptcha(PasteForm):
+        recaptcha = RecaptchaField()
 
     @app.route('/', methods=('POST', 'GET'))
     @app.route('/new', methods=('POST', 'GET'))
     def main():
-        form = PasteForm(request.form)
+        if current_user.is_authenticated():
+            form = PasteForm(request.form)
+        else:
+            form = PasteFormRecaptcha(request.form)
         if form.validate_on_submit():
 
             times = {

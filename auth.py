@@ -2,7 +2,7 @@ __author__ = 'zifnab'
 from app import app
 from flask import current_app, request, abort, flash, redirect, render_template
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
-from flask_wtf import Form
+from flask_wtf import Form, RecaptchaField
 from database import User
 
 from wtforms.fields import StringField, BooleanField, PasswordField
@@ -35,9 +35,11 @@ class AuthForm(Form):
 
 class RegForm(Form):
     username = StringField('Username*', validators=[Required(message='Please enter your username'), Length(min=3, max=16)])
-    email = StringField('Email', validators=[Email()])
+    email = StringField('Email', validators=[])
     password = PasswordField('Password*', validators=[Required(message='Please enter your password'), Length(min=8)])
     password2 = PasswordField('Repeat Password*', validators=[EqualTo('password', message='Passwords do not match'), Required()])
+
+    recaptcha = RecaptchaField()
 
     def validate(self):
         rv = Form.validate(self)
@@ -51,6 +53,8 @@ class RegForm(Form):
         else:
             self.username.errors.append("Username is already taken - try again")
             return False
+
+
 class ForgotPasswordForm(Form):
     username = RegForm.username
     def validate(self):

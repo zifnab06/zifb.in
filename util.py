@@ -3,6 +3,7 @@ __author__ = 'zifnab'
 import string
 from passlib.hash import sha512_crypt
 import database
+from flask_login import login_user
 
 def random_string(size=10, chars=string.ascii_letters + string.digits):
     import random
@@ -17,6 +18,7 @@ def create_user(**kwargs):
                 hash=hash,
                 email=email)
     user.save()
+    login_user(user)
 
 def authenticate_user(username, password):
     user = database.User.objects(username__iexact=username).first()

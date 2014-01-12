@@ -55,12 +55,14 @@ with app.app_context():
             paste = database.Paste(paste=form.text.data)
             if (current_user.is_authenticated()):
                 paste.user = current_user.to_dbref()
+            #Create a name and make sure it doesn't exist
             paste.name = random_string()
-
             collision_check = database.Paste.objects(name__exact=paste.name).first()
             while collision_check is not None:
                 paste.name = random_string()
                 collision_check = database.Paste.objects(name__exact=paste.name).first()
+
+            paste.time = datetime.utcnow()
 
             if times.get(form.expiration.data) is not None:
                 paste.expire = arrow.utcnow().replace(**times.get(form.expiration.data)).datetime

@@ -31,7 +31,7 @@ def authenticate_user(username, password):
     else:
         return None
 
-    
+
 def lookup_user(username):
     user = database.User.objects(username__iexact=username).first()
     return user

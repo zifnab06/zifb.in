@@ -3,7 +3,7 @@ __author__ = 'zifnab'
 from datetime import datetime
 
 from mongoengine import Document
-from mongoengine import StringField, DateTimeField, ReferenceField, IntField
+from mongoengine import StringField, DateTimeField, ReferenceField, IntField, BooleanField
 from flask_login import UserMixin
 
 from util import random_string
@@ -14,7 +14,7 @@ class User(Document, UserMixin, object):
     hash = StringField(required=True)
     email = StringField(required=False)
     registration_date = DateTimeField(default=datetime.now)
-
+    admin = BooleanField(default=False)
 
     def is_authenticated(self):
         return True

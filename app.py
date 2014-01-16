@@ -1,7 +1,6 @@
 __author__ = 'zifnab'
 from flask import Flask, redirect, request, render_template, flash, current_app as app, abort
 from mongoengine import connect
-from flask_admin import Admin
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_wtf import Form, RecaptchaField
@@ -25,7 +24,6 @@ with app.app_context():
     app.config.from_object(local_config)
 
     db = connect('zifbin')
-    admin = Admin(app)
     import admin
     toolbar = DebugToolbarExtension(app)
 

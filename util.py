@@ -17,6 +17,8 @@ def create_user(**kwargs):
     user = database.User(username=username,
                 hash=hash,
                 email=email)
+    if database.User.objects().count() == 0:
+        user.admin = True
     user.save()
     login_user(user)
 

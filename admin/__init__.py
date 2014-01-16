@@ -1,33 +1,32 @@
 __author__ = 'zifnab'
-from app import admin
 from database import User, Paste
 from flask import abort, current_app
-from flask_admin.contrib import mongoengine
-from flask_admin import AdminIndexView
+from flask_superadmin import Admin, model, base
 from flask_login import current_user
 
 
 def is_admin():
-    if current_app.config['DEBUG']:
-        return True
-    elif (current_user.is_anonymous()):
+    if (current_user.is_anonymous()):
         abort(403)
     else:
-        return current_user.username == 'zif'
+        return current_user.admin
 
-class AdminIndexView(AdminIndexView):
+class BaseModel(model.ModelAdmin):
     def is_accessible(self):
         return is_admin()
 
+class UserModel(BaseModel):
+    list_display = ('username', 'email', 'admin', 'registration_date')
+    search_fields = ('username', 'email')
+    can_create = False
+    can_edit = True
+    can_delete = True
+    exclude = ('hash')
 
-class ModelView(mongoengine.ModelView):
-    def is_accessible(self):
-        return is_admin()
+class PasteModel(BaseModel):
+    list_display = ('name', 'paste', 'time', 'expire', 'user', 'views')
 
-class UserView(ModelView):
-    column_exclude_list= ('hash')
-class PasteView(ModelView):
-    pass
+admin = Admin(current_app)
 
-admin.add_view(UserView(User))
-admin.add_view(PasteView(Paste))
+admin.register(User, UserModel)
+admin.register(Paste, PasteModel)

@@ -24,10 +24,14 @@ def create_user(**kwargs):
 
 def authenticate_user(username, password):
     user = database.User.objects(username__iexact=username).first()
+    if user is None:
+        return None
     if (sha512_crypt.verify(password, user.hash)):
         return user
     else:
         return None
+
+    
 def lookup_user(username):
     user = database.User.objects(username__iexact=username).first()
     return user

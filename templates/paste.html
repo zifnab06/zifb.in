@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block topbar %}
-<li><a>Date: {{paste.time}}</a></li>
+<li><a>Date: {{paste.time|prettytime}}</a></li>
 {% if paste.user.username is defined %}
 <li><a>User: {{paste.user.username}}</a></li>
 {% endif %}

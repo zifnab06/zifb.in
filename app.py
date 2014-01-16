@@ -102,20 +102,23 @@ with app.app_context():
             paste.save()
             return redirect('/{id}'.format(id=paste.name))
         return render_template('new_paste.html', form=form)
-    @login_required
+
     @app.route('/my')
     def my():
+        if not current_user.is_authenticated():
+            abort(403)
         pastes = database.Paste.objects(user=current_user.to_dbref())
         if pastes.count() == 0:
             pastes = None
         return render_template("my_pastes.html", pastes=pastes, title="My Pastes")
 
-    @login_required
     @app.route('/<string:id>/delete', methods=('POST', 'GET'))
     def delete(id):
         paste = database.Paste.objects(name__exact=id).first()
         if paste is None:
             abort(404)
+        if paste.user is None:
+            abort(403)
         if not paste.user.username == current_user.username:
             abort(403)
         #confirm action
@@ -135,7 +138,7 @@ with app.app_context():
 
         if paste is None:
             abort(404)
-        elif paste.user.username == current_user.username:
+        elif current_user.is_authenticated() and paste.user and paste.user.username == current_user.username:
             return render_template("paste.html", paste=paste, title=paste.id, owned=True)
         elif paste.expire is not None and arrow.get(paste.expire) < arrow.utcnow():
             if paste.user is None:

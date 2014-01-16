@@ -1,7 +1,7 @@
 __author__ = 'zifnab'
 from app import app
 from flask import current_app, request, abort, flash, redirect, render_template
-from flask_login import LoginManager, login_user, current_user, login_required, logout_user
+from flask_login import LoginManager, login_user, current_user, logout_user
 from flask_wtf import Form, RecaptchaField
 from database import User
 
@@ -79,8 +79,9 @@ def login():
     return render_template('login.html', form=form, title='Login')
 
 @app.route('/auth/logout')
-@login_required
 def logout():
+    if not current_user.is_authenticated():
+        abort(403)
     logout_user()
     flash('You have been logged out', 'info')
     return redirect('/')
@@ -103,3 +104,6 @@ def pwreset():
 
     return render_template('pwreset.html', form=form, title='Forgot Passowrd')
     pass
+
+
+login_manager.login_view = login

@@ -35,6 +35,9 @@
                 <li><a href="{{ url_for('main') }}">zifb.in</a></li>
                 {% if current_user.is_authenticated() %}
                 <li><a href="{{ url_for('my') }}">My Pastes</a></li>
+                {% if current_user.admin %}
+                <li><a href="/admin">Admin</a></li>
+                {% endif %}
                 {% endif %}
 
                 {% block topbar%} {% endblock %}

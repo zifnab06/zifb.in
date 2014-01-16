@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="pure-g-r">
+    <div class="pure-u-1-5"></div>
+    <div class="pure-u-3-5">
+
+        {% if pastes %}
+        <table class="pure-table" align="center">
+            <tr>
+                <th>ID</th>
+                <th>Time</th>
+                <th>Expires</th>
+                <th>Views</th>
+                <th>Contents</th>
+            </tr>
+            {% for paste in pastes %}
+            <tr>
+                <td><a href="/{{ paste.name }}">{{ paste.name }}</a></td>
+                <td>{{paste.time|prettytime}}</td>
+                <td>{{paste.expires}}</td>
+                <td>{{paste.views}}</td>
+                <td>{{paste.paste|truncate(40, killwords=True, end='...') }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+
+        You have no pastes!
+
+        {% endif %}
+    </div>
+    <div class="pure-u-1-5"></div>
+</div>
+
+{% endblock %}

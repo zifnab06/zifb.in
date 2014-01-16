@@ -1,5 +1,5 @@
 __author__ = 'zifnab'
-from flask import Flask, redirect, request, render_template, flash, current_app as app, abort
+from flask import Flask, redirect, request, render_template, flash, abort
 from mongoengine import connect
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
@@ -10,6 +10,7 @@ from passlib.hash import sha512_crypt
 from datetime import datetime, timedelta, date
 import database
 import arrow
+import babel
 
 from util import random_string
 
@@ -22,6 +23,22 @@ with app.app_context():
     import auth
     from config import local_config
     app.config.from_object(local_config)
+    app.config['DEBUG_TB_PANELS'] = [
+        'flask_debugtoolbar.panels.versions.VersionDebugPanel',
+        'flask_debugtoolbar.panels.timer.TimerDebugPanel',
+        'flask_debugtoolbar.panels.headers.HeaderDebugPanel',
+        'flask_debugtoolbar.panels.request_vars.RequestVarsDebugPanel',
+        'flask_debugtoolbar.panels.template.TemplateDebugPanel',
+        'flask_debugtoolbar.panels.logger.LoggingPanel',
+        'flask_debugtoolbar.panels.profiler.ProfilerDebugPanel',
+        'flask_debugtoolbar_mongo.panel.MongoDebugPanel'
+        ]
+    @app.template_filter('prettytime')
+    def format_datetime(value, format='medium'):
+        return arrow.get(value).format('YYYY-MM-DD HH:MM')
+
+
+
 
     db = connect('zifbin')
     import admin
@@ -72,6 +89,14 @@ with app.app_context():
             paste.save()
             return redirect('/{id}'.format(id=paste.name))
         return render_template('new_paste.html', form=form)
+    @login_required
+    @app.route('/my')
+    def my():
+        pastes = database.Paste.objects(user=current_user.to_dbref())
+        if pastes.count() == 0:
+            pastes = None
+        return render_template("my_pastes.html", pastes=pastes, title="My Pastes")
+
 
     @app.route('/<string:id>')
     def get(id):
@@ -84,6 +109,7 @@ with app.app_context():
             paste.views = paste.views + 1
             paste.save()
             return render_template("paste.html", paste=paste, title=paste.id)
+
 
 
 

@@ -5,7 +5,9 @@ Flask-Script
 Flask-mongoengine
 Flask-WTF
 Flask-DebugToolbar
+Flask-DebugToolbar-Mongo
 Flask-Login
 mongoengine
 passlib
 arrow
+babel

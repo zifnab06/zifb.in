@@ -17,7 +17,7 @@
             <tr>
                 <td><a href="/{{ paste.name }}">{{ paste.name }}</a></td>
                 <td>{{paste.time|prettytime}}</td>
-                <td>{{paste.expires}}</td>
+                <td>{{paste.expire|prettytime}}</td>
                 <td>{{paste.views}}</td>
                 <td>{{paste.paste|truncate(40, killwords=True, end='...') }}</td>
             </tr>

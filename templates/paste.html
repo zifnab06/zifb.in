@@ -6,11 +6,26 @@
 {% endif %}
 <li><a>ID: {{paste.name}}</a></li>
 <li><a>Views: {{paste.views}}</a></li>
+{% if paste.expire %}
+<li><a>Expires: {{paste.expire|humanize}}</a></li>
+{% else %}
+<li><a>Expires: Never</a></li>
+{% endif %}
+
+{% if owned %}
+<li><a href="/{{paste.name}}/delete">Delete</a></li>
+{% endif %}
 {% endblock %}
 {% block body %}
 <div class="pure-g-r">
     <div class="pure-u-1-5"></div>
     <div class="pure-u-3-5">
+        {% if form is defined %}
+        <form action="" method="post" class="pure-form">
+            {{form.confirm}}
+        </form>
+        {% endif %}
+
         <pre>{{paste.paste}}</pre>
     </div>
     <div class="pure-u-1-5"></div>

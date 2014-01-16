@@ -82,7 +82,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out')
+    flash('You have been logged out', 'info')
     return redirect('/')
 
 @app.route('/auth/register', methods=('POST','GET'))
@@ -90,7 +90,7 @@ def register():
     form = RegForm(request.form)
     if request.method == 'POST' and form.validate():
         create_user(**form.data)
-        flash('Thanks for registering!')
+        flash('Thanks for registering!', 'info')
         return redirect('/')
     return render_template('register.html', form=form, title='Register')
 #@app.route('/auth/forgotpassword', methods=('POST', 'GET'))

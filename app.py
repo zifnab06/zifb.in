@@ -37,6 +37,9 @@ with app.app_context():
     def format_datetime(value, format='medium'):
         return arrow.get(value).format('YYYY-MM-DD HH:MM')
 
+    @app.template_filter('humanize')
+    def humanize_date(value):
+        return arrow.get(value).humanize()
 
 
 
@@ -46,14 +49,24 @@ with app.app_context():
 
     class PasteForm(Form):
         text = TextAreaField('Paste Here', validators=[Required()])
+        expiration = SelectField('Expiration', choices=[('0', 'Forever Visible'),
+                                                        ('1', 'Visible For Fifteen Minutes'),
+                                                        ('2', 'Visible For Thirty Minutes'),
+                                                        ('3', 'Visible For One Hour'),
+                                                        ('4', 'Visible For Six Hours'),
+                                                        ('5', 'Visible For One Day')], default='4')
+    class PasteFormRecaptcha(PasteForm):
+        recaptcha = RecaptchaField()
         expiration = SelectField('Expiration', choices=[('0', 'Expires Never'),
                                                         ('1', 'Expires In Fifteen Minutes'),
                                                         ('2', 'Expires In Thirty Minutes'),
                                                         ('3', 'Expires In One Hour'),
                                                         ('4', 'Expires In Six Hours'),
-                                                        ('5', 'Expires In One Day')], default='3')
-    class PasteFormRecaptcha(PasteForm):
-        recaptcha = RecaptchaField()
+                                                        ('5', 'Expires In One Day')], default='4')
+
+    class ConfirmForm(Form):
+        confirm = SubmitField('Click here to confirm deletion', validators=[Required()])
+
 
     @app.route('/', methods=('POST', 'GET'))
     @app.route('/new', methods=('POST', 'GET'))
@@ -97,13 +110,36 @@ with app.app_context():
             pastes = None
         return render_template("my_pastes.html", pastes=pastes, title="My Pastes")
 
-
-    @app.route('/<string:id>')
-    def get(id):
+    @login_required
+    @app.route('/<string:id>/delete', methods=('POST', 'GET'))
+    def delete(id):
         paste = database.Paste.objects(name__exact=id).first()
         if paste is None:
             abort(404)
+        if not paste.user.username == current_user.username:
+            abort(403)
+        #confirm action
+        form = ConfirmForm(request.form)
+
+        if request.method == 'POST' and form.confirm.data:
+            paste.delete()
+            flash('Paste was removed', 'info')
+            return redirect('/')
+        return render_template("paste.html", form=form, paste=paste, title='Delete Paste')
+
+
+    #THIS ROUTE NEEDS TO BE LAST
+    @app.route('/<string:id>')
+    def get(id):
+        paste = database.Paste.objects(name__exact=id).first()
+
+        if paste is None:
+            abort(404)
+        elif paste.user.username == current_user.username:
+            return render_template("paste.html", paste=paste, title=paste.id, owned=True)
         elif paste.expire is not None and arrow.get(paste.expire) < arrow.utcnow():
+            if paste.user is None:
+                paste.delete()
             abort(404)
         else:
             paste.views = paste.views + 1

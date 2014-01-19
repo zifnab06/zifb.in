@@ -11,3 +11,4 @@ mongoengine
 passlib
 arrow
 babel
+pygments

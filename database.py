@@ -39,5 +39,5 @@ class Paste(Document):
     expire = DateTimeField(required=False)
     user = ReferenceField(User, required=False)
     views = IntField(required=False, default=0)
-
+    language = StringField(required=False)
 

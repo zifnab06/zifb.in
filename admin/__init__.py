@@ -24,7 +24,7 @@ class UserModel(BaseModel):
     exclude = ('hash')
 
 class PasteModel(BaseModel):
-    list_display = ('name', 'paste', 'time', 'expire', 'user', 'views')
+    list_display = ('name', 'paste', 'time', 'expire', 'user', 'views', 'language')
 
 admin = Admin(current_app)
 

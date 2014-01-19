@@ -10,7 +10,9 @@ from passlib.hash import sha512_crypt
 from datetime import datetime, timedelta, date
 import database
 import arrow
-import babel
+from pygments import highlight
+from pygments.lexers import guess_lexer, get_lexer_by_name, get_all_lexers
+from pygments.formatters import HtmlFormatter
 
 from util import random_string
 
@@ -47,6 +49,12 @@ with app.app_context():
     import admin
     toolbar = DebugToolbarExtension(app)
 
+    def get_lexers():
+        yield ('none', 'Automatically Detect')
+        for lexer in sorted(get_all_lexers()):
+            yield (lexer[1][0], lexer[0])
+
+
     class PasteForm(Form):
         text = TextAreaField('Paste Here', validators=[Required()])
         expiration = SelectField('Expiration', choices=[('0', 'Forever Visible'),
@@ -55,6 +63,9 @@ with app.app_context():
                                                         ('3', 'Visible For One Hour'),
                                                         ('4', 'Visible For Six Hours'),
                                                         ('5', 'Visible For One Day')], default='4')
+        language = SelectField('Language', choices=[i for i in get_lexers()])
+
+
     class PasteFormRecaptcha(PasteForm):
         recaptcha = RecaptchaField()
         expiration = SelectField('Expiration', choices=[('0', 'Expires Never'),
@@ -66,7 +77,6 @@ with app.app_context():
 
     class ConfirmForm(Form):
         confirm = SubmitField('Click here to confirm deletion', validators=[Required()])
-
 
     @app.route('/', methods=('POST', 'GET'))
     @app.route('/new', methods=('POST', 'GET'))
@@ -95,12 +105,18 @@ with app.app_context():
                 paste.name = random_string()
                 collision_check = database.Paste.objects(name__exact=paste.name).first()
 
+            if form.language.data is not None:
+                paste.language = form.language.data
+            else:
+                paste.language = guess_lexer(paste.paste).name
             paste.time = datetime.utcnow()
 
             if times.get(form.expiration.data) is not None:
                 paste.expire = arrow.utcnow().replace(**times.get(form.expiration.data)).datetime
             paste.save()
             return redirect('/{id}'.format(id=paste.name))
+
+
         return render_template('new_paste.html', form=form)
 
     @app.route('/my')
@@ -139,15 +155,37 @@ with app.app_context():
         if paste is None:
             abort(404)
         elif current_user.is_authenticated() and paste.user and paste.user.username == current_user.username:
-            return render_template("paste.html", paste=paste, title=paste.id, owned=True)
+            return render_paste(paste, True)
         elif paste.expire is not None and arrow.get(paste.expire) < arrow.utcnow():
             if paste.user is None:
                 paste.delete()
             abort(404)
         else:
-            paste.views = paste.views + 1
-            paste.save()
-            return render_template("paste.html", paste=paste, title=paste.id)
+            return render_paste(paste, False)
+
+
+    def htmlify(string, language=None):
+        '''
+        Takes a string, and returns an html encoded string with color formatting
+        '''
+        if language is None:
+            lexer = guess_lexer(string)
+        else:
+            try:
+                lexer = get_lexer_by_name(language)
+            except:
+                lexer = guess_lexer(string)
+
+        format = HtmlFormatter()
+        return highlight(string, lexer, format)
+
+    def render_paste(paste, owned):
+        if paste.language == 'none' or paste.language is None:
+            paste.language = guess_lexer(paste.paste).name
+        paste.views += 1
+        paste.save()
+        return render_template("paste.html", paste=paste, title=paste.id, text=htmlify(paste.paste, paste.language), owned=owned)
+
 
 
 

@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
 {% block topbar %}
 <li><a>Date: {{paste.time|prettytime}}</a></li>
+
+{% if paste.language is defined%}
+<li><a>Language: {{paste.language}}</a></li>
+{% endif %}
+
 {% if paste.user.username is defined %}
 <li><a>User: {{paste.user.username}}</a></li>
 {% endif %}
-<li><a>ID: {{paste.name}}</a></li>
+
 <li><a>Views: {{paste.views}}</a></li>
+
 {% if paste.expire %}
 <li><a>Expires: {{paste.expire|humanize}}</a></li>
 {% else %}
@@ -22,7 +28,8 @@
     <div class="pure-u-3-5">
         {% if form is defined %}
         <form action="" method="post" class="pure-form">
-            {{form.confirm(class="pure-button pure-button-primary pure-input-1", style=" background: rgb(202, 60, 60);")}}
+            {{form.confirm(class="pure-button pure-button-primary pure-input-1", style=" background: rgb(202, 60,
+            60);")}}
         </form>
         {% endif %}
 

@@ -12,3 +12,4 @@ passlib
 arrow
 babel
 pygments
+uwsgi

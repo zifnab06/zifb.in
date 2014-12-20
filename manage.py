@@ -14,7 +14,7 @@ def print_routes():
         print rule
 @manager.command
 def remove_expired():
-    for paste in Paste.objects(expire__lt=arrow.now().datetime, user=None):
+    for paste in Paste.objects(expire__lt=arrow.now().datetime):
         print 'delete {0}'.format(paste.name)
         paste.delete()
 

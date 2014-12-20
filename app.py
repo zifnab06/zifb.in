@@ -57,23 +57,25 @@ with app.app_context():
 
     class PasteForm(Form):
         text = TextAreaField('Paste Here', validators=[Required()])
-        expiration = SelectField('Expiration', choices=[('0', 'Forever Visible'),
-                                                        ('1', 'Visible For Fifteen Minutes'),
-                                                        ('2', 'Visible For Thirty Minutes'),
-                                                        ('3', 'Visible For One Hour'),
-                                                        ('4', 'Visible For Six Hours'),
-                                                        ('5', 'Visible For One Day')], default='4')
-        language = SelectField('Language', choices=[i for i in get_lexers()])
-
-
-    class PasteFormRecaptcha(PasteForm):
-        recaptcha = RecaptchaField()
         expiration = SelectField('Expiration', choices=[('0', 'Expires Never'),
                                                         ('1', 'Expires In Fifteen Minutes'),
                                                         ('2', 'Expires In Thirty Minutes'),
                                                         ('3', 'Expires In One Hour'),
                                                         ('4', 'Expires In Six Hours'),
-                                                        ('5', 'Expires In One Day')], default='4')
+                                                        ('5', 'Expires in Twelve Hours'),
+                                                        ('5', 'Expires In One Day')], default='0')
+        language = SelectField('Language', choices=[i for i in get_lexers()])
+
+
+    class PasteFormRecaptcha(PasteForm):
+        recaptcha = RecaptchaField()
+        expiration = SelectField('Expiration', choices=[('1', 'Expires In Fifteen Minutes'),
+                                                        ('2', 'Expires In Thirty Minutes'),
+                                                        ('3', 'Expires In One Hour'),
+                                                        ('4', 'Expires In Six Hours'),
+                                                        ('5', 'Expires in Twelve Hours'),
+                                                        ('6', 'Expires In One Day')], default='6')
+
 
     class ConfirmForm(Form):
         confirm = SubmitField('Click here to confirm deletion', validators=[Required()])
@@ -93,7 +95,8 @@ with app.app_context():
                 '2':{'minutes':+30},
                 '3':{'hours':+1},
                 '4':{'hours':+6},
-                '5':{'days':+1}
+                '5':{'hours':+12},
+                '6':{'days':+1}
             }
             paste = database.Paste(paste=form.text.data)
             if (current_user.is_authenticated()):

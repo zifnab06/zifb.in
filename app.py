@@ -161,7 +161,7 @@ with app.app_context():
             paste.delete()
             abort(404)
         else:
-            return render_paste(paste, False)
+            return render_paste(paste, paste.username == current_user.username)
 
 
     def htmlify(string, language=None):

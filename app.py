@@ -158,7 +158,8 @@ with app.app_context():
         if paste is None:
             abort(404)
         elif paste.expire is not None and arrow.get(paste.expire) < arrow.utcnow():
-            paste.delete()
+            for paste in Paste.objects(expire__lt=arrow.now().datetime):
+                paste.delete()
             abort(404)
         else:
             return render_paste(paste, False)

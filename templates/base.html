@@ -19,7 +19,7 @@
     <div id="content">
         <div class="pure-menu pure-menu-open pure-menu-horizontal">
             <ul>
-                <li><a href="{{ url_for('main') }}">zifb.in</a></li>
+                <li><a href="{{ url_for('main') }}">{{request.headers['Host']}}</a></li>
                 {% if current_user.is_authenticated() %}
                 <li><a href="{{ url_for('my') }}">My Pastes</a></li>
                 {% if current_user.admin %}

@@ -157,8 +157,6 @@ with app.app_context():
 
         if paste is None:
             abort(404)
-        elif current_user.is_authenticated() and paste.user and paste.user.username == current_user.username:
-            return render_paste(paste, True)
         elif paste.expire is not None and arrow.get(paste.expire) < arrow.utcnow():
             paste.delete()
             abort(404)

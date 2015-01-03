@@ -5,7 +5,7 @@ html, body, #container {
 }
 body > #container {
     height: auto;
-    min-height: 91%;
+    min-height: 92%;
 }
 textarea {
     height: 500px

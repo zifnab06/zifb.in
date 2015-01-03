@@ -193,10 +193,7 @@ with app.app_context():
 app.debug = app.config['DEBUG']
 
 def run():
-    app.run(
-        host=app.config.get('HOST', None),
-        port=app.config.get('PORT', None)
-    )
+    app.run()
 
 
 

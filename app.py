@@ -37,7 +37,7 @@ with app.app_context():
         ]
     @app.template_filter('prettytime')
     def format_datetime(value, format='medium'):
-        return arrow.get(value).format('YYYY-MM-DD HH:MM')
+        return arrow.get(value).format('YYYY-MM-DD HH:mm')
 
     @app.template_filter('humanize')
     def humanize_date(value):
@@ -83,10 +83,7 @@ with app.app_context():
     @app.route('/', methods=('POST', 'GET'))
     @app.route('/new', methods=('POST', 'GET'))
     def main():
-        if current_user.is_authenticated():
-            form = PasteForm(request.form)
-        else:
-            form = PasteFormRecaptcha(request.form)
+        form = PasteForm(request.form)
         if form.validate_on_submit():
 
             times = {

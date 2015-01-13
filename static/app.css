@@ -8,7 +8,9 @@ body > #container {
     min-height: 92%;
 }
 textarea {
-    height: 500px
+    height: 500px;
+    font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+
 }
 .footer {
     clear: both;

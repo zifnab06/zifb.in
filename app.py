@@ -171,7 +171,7 @@ with app.app_context():
             paste.delete()
             abort(404)
         else:
-            return render_paste(paste, current_user.is_authenticated() and paste.user and paste.user.username == current_user.username)
+            return render_paste(paste, title=paste.id)
 
 
     def htmlify(string, language=None):
@@ -189,18 +189,22 @@ with app.app_context():
         format = HtmlFormatter()
         return highlight(string, lexer, format)
 
-    def render_paste(paste, owned, title=None):
+    def render_paste(paste, title=None):
+        passworded = False
         if all(c in set(string.hexdigits) for c in paste.paste):
+            passworded = True
             form = PasswordForm(request.form)
         else:
             form = None
         if not title:
             title = paste.id
-        if form and form.password.data:
+        if passworded:
             try:
                 text = decrypt(form.password.data, paste.paste.decode('hex'))
+                passworded = False
             except:
                 text = paste.paste
+                passworded = True
         else:
             text = paste.paste
 
@@ -214,7 +218,7 @@ with app.app_context():
         paste.views += 1
         paste.save()
 
-        return render_template("paste.html", paste=paste, title=title, text=text, form=form, owned=owned, markdown=markdown)
+        return render_template("paste.html", paste=paste, title=title, text=text, form=form, passworded=passworded)
 
 
 

@@ -182,7 +182,7 @@ with app.app_context():
             paste.language = guess_lexer(paste.paste).name
             text=htmlify(paste.paste, paste.language)
         elif paste.language == 'markdown':
-            text=markdown(cgi.escape(paste.paste))
+            text=markdown(cgi.escape(paste.paste.replace('!','\\!')))
         else:
             text=htmlify(paste.paste, paste.language)
         paste.views += 1

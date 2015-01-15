@@ -52,9 +52,9 @@ with app.app_context():
 
     def get_lexers():
         yield ('none', 'Automatically Detect')
+        yield ('markdown', 'markdown')
         for lexer in sorted(get_all_lexers()):
             yield (lexer[1][0], lexer[0])
-
 
     class PasteForm(Form):
         text = TextAreaField('Paste Here', validators=[Required()])

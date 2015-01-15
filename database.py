@@ -6,7 +6,6 @@ from mongoengine import Document
 from mongoengine import StringField, DateTimeField, ReferenceField, IntField, BooleanField
 from flask_login import UserMixin
 
-from util import random_string
 
 
 class User(Document, UserMixin, object):

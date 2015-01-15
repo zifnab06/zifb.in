@@ -1,4 +1,4 @@
-__author__ = 'zifnab'
+___author__ = 'zifnab'
 from flask import Flask, redirect, request, render_template, flash, abort, Response
 from mongoengine import connect
 from flask_debugtoolbar import DebugToolbarExtension
@@ -8,17 +8,17 @@ from wtforms.fields import *
 from wtforms.validators import *
 from passlib.hash import sha512_crypt
 from datetime import datetime, timedelta, date
-import database
-import arrow
 from pygments import highlight
 from pygments.lexers import guess_lexer, get_lexer_by_name, get_all_lexers
 from pygments.formatters import HtmlFormatter
 from markdown2 import markdown
-import cgi
 from simplecrypt import encrypt, decrypt
 from binascii import hexlify
 from util import random_string
-
+import database
+import arrow
+import cgi
+import string
 
 
 
@@ -83,6 +83,10 @@ with app.app_context():
     class ConfirmForm(Form):
         confirm = SubmitField('Click here to confirm deletion', validators=[Required()])
 
+    class PasswordForm(Form):
+        password = TextField('Password', validators=[Optional()])
+        confirm = SubmitField('Decrypt Text', validators=[Required()])
+
     @app.route('/', methods=('POST', 'GET'))
     @app.route('/new', methods=('POST', 'GET'))
     def main():
@@ -122,7 +126,7 @@ with app.app_context():
             if form.language.data is not None:
                 paste.language = form.language.data
             else:
-                paste.language = guess_lexer(paste.paste).name
+                paste.language = guess_lexer(form.text.data).name
             paste.time = datetime.utcnow()
 
             if times.get(form.expiration.data) is not None:
@@ -146,26 +150,8 @@ with app.app_context():
             pastes = None
         return render_template("my_pastes.html", pastes=pastes, title="My Pastes")
 
-    @app.route('/<string:id>/delete', methods=('POST', 'GET'))
-    def delete(id):
-        paste = database.Paste.objects(name__exact=id).first()
-        if paste is None:
-            abort(404)
-        if paste.user is None:
-            abort(403)
-        if not paste.user.username == current_user.username:
-            abort(403)
-        #confirm action
-        form = ConfirmForm(request.form)
 
-        if request.method == 'POST' and form.confirm.data:
-            paste.delete()
-            flash('Paste was removed', 'info')
-            return redirect('/')
-        return render_paste(paste, current_user.is_authenticated() and paste.user and paste.user.username == current_user.username, title='Delete Post', form=form)
-
-
-    @app.route('/<string:id>/raw')
+    @app.route('/raw/<string:id>')
     def raw(id):
         paste = database.Paste.objects(name__exact=id).first()
         if paste is None:
@@ -174,9 +160,9 @@ with app.app_context():
             return Response(paste.paste, mimetype="text/plain")
 
     #THIS ROUTE NEEDS TO BE LAST
-    @app.route('/<string:id>')
-    @app.route('/<string:id>/<string:pw>')
-    def get(id, pw=None):
+    @app.route('/<string:id>', methods=('POST', 'GET'))
+    def get(id):
+
         paste = database.Paste.objects(name__exact=id).first()
 
         if paste is None:
@@ -185,7 +171,7 @@ with app.app_context():
             paste.delete()
             abort(404)
         else:
-            return render_paste(paste, current_user.is_authenticated() and paste.user and paste.user.username == current_user.username, pw=pw)
+            return render_paste(paste, current_user.is_authenticated() and paste.user and paste.user.username == current_user.username)
 
 
     def htmlify(string, language=None):
@@ -203,13 +189,16 @@ with app.app_context():
         format = HtmlFormatter()
         return highlight(string, lexer, format)
 
-    def render_paste(paste, owned, title=None, form=None, pw=None):
+    def render_paste(paste, owned, title=None):
+        if all(c in set(string.hexdigits) for c in paste.paste):
+            form = PasswordForm(request.form)
+        else:
+            form = None
         if not title:
             title = paste.id
-
-        if pw:
+        if form and form.password.data:
             try:
-                text = decrypt(pw, paste.paste.decode('hex'))
+                text = decrypt(form.password.data, paste.paste.decode('hex'))
             except:
                 text = paste.paste
         else:
@@ -225,7 +214,7 @@ with app.app_context():
         paste.views += 1
         paste.save()
 
-        return render_template("paste.html", paste=paste, pw=pw, title=title, text=text, form=form, owned=owned, markdown=markdown)
+        return render_template("paste.html", paste=paste, title=title, text=text, form=form, owned=owned, markdown=markdown)
 
 
 

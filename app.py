@@ -152,7 +152,6 @@ with app.app_context():
             flash('Paste was removed', 'info')
             return redirect('/')
         return render_paste(paste, current_user.is_authenticated() and paste.user and paste.user.username == current_user.username, title='Delete Post', form=form)
-#        return render_template("paste.html", form=form, paste=paste, title='Delete Paste')
 
 
     @app.route('/<string:id>/raw')

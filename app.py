@@ -68,8 +68,7 @@ with app.app_context():
         language = SelectField('Language', choices=[i for i in get_lexers()])
 
 
-    class PasteFormRecaptcha(PasteForm):
-        recaptcha = RecaptchaField()
+    class PasteFormNoAuth(PasteForm):
         expiration = SelectField('Expiration', choices=[('1', 'Expires In Fifteen Minutes'),
                                                         ('2', 'Expires In Thirty Minutes'),
                                                         ('3', 'Expires In One Hour'),
@@ -84,7 +83,12 @@ with app.app_context():
     @app.route('/', methods=('POST', 'GET'))
     @app.route('/new', methods=('POST', 'GET'))
     def main():
-        form = PasteForm(request.form)
+        if current_user.is_authenticated():
+            form = PasteForm(request.form)
+        else:
+            print 'test'
+            form = PasteFormNoAuth(request.form)
+
         if form.validate_on_submit():
 
             times = {
@@ -114,6 +118,8 @@ with app.app_context():
 
             if times.get(form.expiration.data) is not None:
                 paste.expire = arrow.utcnow().replace(**times.get(form.expiration.data)).datetime
+            if times.get(form.expiration.data) is None and not current_user.is_authenticated():
+                paste.expire = arrow.utcnow.replace(**times.get(6))
             paste.save()
             return redirect('/{id}'.format(id=paste.name))
 

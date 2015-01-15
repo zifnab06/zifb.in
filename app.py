@@ -205,6 +205,8 @@ with app.app_context():
             except:
                 text = paste.paste
                 passworded = True
+            #Remove password, don't send it back to the client 
+            form.password.data = None
         else:
             text = paste.paste
 

@@ -29,7 +29,8 @@ class User(Document, UserMixin, object):
         'index': ['username'],
         'collection': 'users'
     }
-
+    def __str__(self):
+        return self.username
 
 
 class Paste(Document):
@@ -41,3 +42,5 @@ class Paste(Document):
     views = IntField(required=False, default=0)
     language = StringField(required=False)
 
+    def __str__(self):
+        return name

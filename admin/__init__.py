@@ -1,9 +1,9 @@
 __author__ = 'zifnab'
 from database import User, Paste
 from flask import abort, current_app
-from flask_superadmin import Admin, model, base
 from flask_login import current_user
-
+from flask_admin import BaseView, Admin
+from flask_admin.contrib.mongoengine import ModelView
 
 def is_admin():
     if (current_user.is_anonymous()):
@@ -11,11 +11,15 @@ def is_admin():
     else:
         return current_user.admin
 
-class BaseModel(model.ModelAdmin):
+class ProtectedView(BaseView):
     def is_accessible(self):
         return is_admin()
 
-class UserModel(BaseModel):
+class SecureModelView(ModelView):
+    def is_accessible(self):
+        return is_admin()
+
+class UserModel(SecureModelView):
     list_display = ('username', 'email', 'admin', 'registration_date')
     search_fields = ('username', 'email')
     can_create = False
@@ -23,10 +27,10 @@ class UserModel(BaseModel):
     can_delete = True
     exclude = ('hash')
 
-class PasteModel(BaseModel):
+class PasteModel(SecureModelView):
     list_display = ('name', 'paste', 'time', 'expire', 'user', 'views', 'language')
 
 admin = Admin(current_app)
 
-admin.register(User, UserModel)
-admin.register(Paste, PasteModel)
+admin.add_view(UserModel(User))
+admin.add_view(PasteModel(Paste))

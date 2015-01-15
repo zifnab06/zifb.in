@@ -1,5 +1,5 @@
 __author__ = 'zifnab'
-from flask import Flask, redirect, request, render_template, flash, abort
+from flask import Flask, redirect, request, render_template, flash, abort, Response
 from mongoengine import connect
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
@@ -145,8 +145,17 @@ with app.app_context():
             paste.delete()
             flash('Paste was removed', 'info')
             return redirect('/')
-        return render_template("paste.html", form=form, paste=paste, title='Delete Paste')
+        return render_paste(paste, current_user.is_authenticated() and paste.user and paste.user.username == current_user.username, title='Delete Post', form=form)
+#        return render_template("paste.html", form=form, paste=paste, title='Delete Paste')
 
+
+    @app.route('/<string:id>/raw')
+    def raw(id):
+        paste = database.Paste.objects(name__exact=id).first()
+        if paste is None:
+            abort(404)
+        else:
+            return Response(paste.paste, mimetype="text/plain")
 
     #THIS ROUTE NEEDS TO BE LAST
     @app.route('/<string:id>')
@@ -177,7 +186,9 @@ with app.app_context():
         format = HtmlFormatter()
         return highlight(string, lexer, format)
 
-    def render_paste(paste, owned):
+    def render_paste(paste, owned, title=None, form=None):
+        if not title:
+            title = paste.id
         if paste.language == 'none' or paste.language is None:
             paste.language = guess_lexer(paste.paste).name
             text=htmlify(paste.paste, paste.language)
@@ -187,7 +198,7 @@ with app.app_context():
             text=htmlify(paste.paste, paste.language)
         paste.views += 1
         paste.save()
-        return render_template("paste.html", paste=paste, title=paste.id, text=text, owned=owned, markdown=markdown)
+        return render_template("paste.html", paste=paste, title=title, text=text, form=form, owned=owned, markdown=markdown)
 
 
 

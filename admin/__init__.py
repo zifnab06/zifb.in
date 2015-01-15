@@ -20,12 +20,11 @@ class SecureModelView(ModelView):
         return is_admin()
 
 class UserModel(SecureModelView):
-    list_display = ('username', 'email', 'admin', 'registration_date')
-    search_fields = ('username', 'email')
+    column_exclude_list = ('hash')
+    column_searchable_list = ('username', 'email')
     can_create = False
     can_edit = True
     can_delete = True
-    exclude = ('hash')
 
 class PasteModel(SecureModelView):
     list_display = ('name', 'paste', 'time', 'expire', 'user', 'views', 'language')

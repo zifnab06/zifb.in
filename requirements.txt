@@ -13,3 +13,4 @@ arrow
 babel
 pygments
 uwsgi
+markdown2

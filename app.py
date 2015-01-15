@@ -13,7 +13,8 @@ import arrow
 from pygments import highlight
 from pygments.lexers import guess_lexer, get_lexer_by_name, get_all_lexers
 from pygments.formatters import HtmlFormatter
-
+from markdown2 import markdown
+import cgi
 from util import random_string
 
 
@@ -179,9 +180,14 @@ with app.app_context():
     def render_paste(paste, owned):
         if paste.language == 'none' or paste.language is None:
             paste.language = guess_lexer(paste.paste).name
+            text=htmlify(paste.paste, paste.language)
+        elif paste.language == 'markdown':
+            text=markdown(cgi.escape(paste.paste))
+        else:
+            text=htmlify(paste.paste, paste.language)
         paste.views += 1
         paste.save()
-        return render_template("paste.html", paste=paste, title=paste.id, text=htmlify(paste.paste, paste.language), owned=owned)
+        return render_template("paste.html", paste=paste, title=paste.id, text=text, owned=owned, markdown=markdown)
 
 
 

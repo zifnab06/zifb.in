@@ -14,3 +14,4 @@ babel
 pygments
 uwsgi
 markdown2
+simple-crypt

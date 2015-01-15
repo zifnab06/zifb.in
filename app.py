@@ -15,6 +15,8 @@ from pygments.lexers import guess_lexer, get_lexer_by_name, get_all_lexers
 from pygments.formatters import HtmlFormatter
 from markdown2 import markdown
 import cgi
+from simplecrypt import encrypt, decrypt
+from binascii import hexlify
 from util import random_string
 
 
@@ -66,7 +68,7 @@ with app.app_context():
                                                         ('5', 'Expires in Twelve Hours'),
                                                         ('6', 'Expires In One Day')], default='0')
         language = SelectField('Language', choices=[i for i in get_lexers()])
-
+        password = TextField('Password', validators=[Optional()])
 
     class PasteFormNoAuth(PasteForm):
         expiration = SelectField('Expiration', choices=[('1', 'Expires In Fifteen Minutes'),
@@ -75,6 +77,7 @@ with app.app_context():
                                                         ('4', 'Expires In Six Hours'),
                                                         ('5', 'Expires in Twelve Hours'),
                                                         ('6', 'Expires In One Day')], default='6')
+        password = TextField('Password', validators=[Optional()])
 
 
     class ConfirmForm(Form):
@@ -100,7 +103,13 @@ with app.app_context():
                 '5':{'hours':+12},
                 '6':{'days':+1}
             }
-            paste = database.Paste(paste=form.text.data)
+            paste = database.Paste()
+
+            if form.password.data:
+                paste.paste = hexlify(encrypt(form.text.data, form.password.data))
+            else:
+                paste.paste = form.text.data
+
             if (current_user.is_authenticated()):
                 paste.user = current_user.to_dbref()
             #Create a name and make sure it doesn't exist
@@ -120,6 +129,8 @@ with app.app_context():
                 paste.expire = arrow.utcnow().replace(**times.get(form.expiration.data)).datetime
             if times.get(form.expiration.data) is None and not current_user.is_authenticated():
                 paste.expire = arrow.utcnow.replace(**times.get(6))
+            
+                
             paste.save()
             return redirect('/{id}'.format(id=paste.name))
 
@@ -164,7 +175,8 @@ with app.app_context():
 
     #THIS ROUTE NEEDS TO BE LAST
     @app.route('/<string:id>')
-    def get(id):
+    @app.route('/<string:id>/<string:pw>')
+    def get(id, pw=None):
         paste = database.Paste.objects(name__exact=id).first()
 
         if paste is None:
@@ -173,7 +185,7 @@ with app.app_context():
             paste.delete()
             abort(404)
         else:
-            return render_paste(paste, current_user.is_authenticated() and paste.user and paste.user.username == current_user.username)
+            return render_paste(paste, current_user.is_authenticated() and paste.user and paste.user.username == current_user.username, pw=pw)
 
 
     def htmlify(string, language=None):
@@ -191,19 +203,29 @@ with app.app_context():
         format = HtmlFormatter()
         return highlight(string, lexer, format)
 
-    def render_paste(paste, owned, title=None, form=None):
+    def render_paste(paste, owned, title=None, form=None, pw=None):
         if not title:
             title = paste.id
-        if paste.language == 'none' or paste.language is None:
-            paste.language = guess_lexer(paste.paste).name
-            text=htmlify(paste.paste, paste.language)
-        elif paste.language == 'markdown':
-            text=markdown(cgi.escape(paste.paste.replace('!','\\!')))
+
+        if pw:
+            try:
+                text = decrypt(pw, paste.paste.decode('hex'))
+            except:
+                text = paste.paste
         else:
-            text=htmlify(paste.paste, paste.language)
+            text = paste.paste
+
+        if paste.language == 'none' or paste.language is None:
+            paste.language = guess_lexer(text).name
+            text=htmlify(text, paste.language)
+        elif paste.language == 'markdown':
+            text=markdown(cgi.escape(text.replace('!','\\!')))
+        else:
+            text=htmlify(text, paste.language)
         paste.views += 1
         paste.save()
-        return render_template("paste.html", paste=paste, title=title, text=text, form=form, owned=owned, markdown=markdown)
+
+        return render_template("paste.html", paste=paste, pw=pw, title=title, text=text, form=form, owned=owned, markdown=markdown)
 
 
 

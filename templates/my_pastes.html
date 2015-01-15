@@ -8,6 +8,7 @@
         <table class="pure-table" align="center">
             <tr>
                 <th>ID</th>
+                <th></th>
                 <th>Time</th>
                 <th>Expires</th>
                 <th>Views</th>
@@ -16,6 +17,7 @@
             {% for paste in pastes %}
             <tr>
                 <td><a href="/{{ paste.name }}">{{ paste.name }}</a></td>
+                <td><a href="/{{ paste.name }}/delete"><i class="fa fa-minus-square delete"></i></a>
                 <td>{{paste.time|prettytime}}</td>
                 <td>{% if paste.expire %}{{paste.expire|prettytime}}{% endif %}</td>
                 <td>{{paste.views}}</td>

@@ -63,7 +63,7 @@ with app.app_context():
                                                         ('3', 'Expires In One Hour'),
                                                         ('4', 'Expires In Six Hours'),
                                                         ('5', 'Expires in Twelve Hours'),
-                                                        ('5', 'Expires In One Day')], default='0')
+                                                        ('6', 'Expires In One Day')], default='0')
         language = SelectField('Language', choices=[i for i in get_lexers()])
 
 

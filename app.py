@@ -68,7 +68,7 @@ with app.app_context():
                                                         ('5', 'Expires in Twelve Hours'),
                                                         ('6', 'Expires In One Day')], default='0')
         language = SelectField('Language', choices=[i for i in get_lexers()])
-        password = TextField('Password', validators=[Optional()])
+        password = PasswordField('Password (Optional)', validators=[Optional()])
 
     class PasteFormNoAuth(PasteForm):
         expiration = SelectField('Expiration', choices=[('1', 'Expires In Fifteen Minutes'),
@@ -77,14 +77,14 @@ with app.app_context():
                                                         ('4', 'Expires In Six Hours'),
                                                         ('5', 'Expires in Twelve Hours'),
                                                         ('6', 'Expires In One Day')], default='6')
-        password = TextField('Password', validators=[Optional()])
+        password = PasswordField('Password', validators=[Optional()])
 
 
     class ConfirmForm(Form):
         confirm = SubmitField('Click here to confirm deletion', validators=[Required()])
 
     class PasswordForm(Form):
-        password = TextField('Password', validators=[Optional()])
+        password = PasswordField('Password', validators=[Optional()])
         confirm = SubmitField('Decrypt Text', validators=[Required()])
 
     @app.route('/', methods=('POST', 'GET'))
@@ -198,11 +198,12 @@ with app.app_context():
             form = None
         if not title:
             title = paste.id
-        if passworded:
+        if passworded and form.password.data:
             try:
                 text = decrypt(form.password.data, paste.paste.decode('hex'))
                 passworded = False
             except:
+                flash('Invalid Password', 'error')
                 text = paste.paste
                 passworded = True
             #Remove password, don't send it back to the client 

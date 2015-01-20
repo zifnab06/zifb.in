@@ -7,14 +7,12 @@ import requests
 import sys
 
 ##Pastes things to zifb.in
-def paste(expire=None):
-    """
-Pastes things to https://zifb.in
+def paste(expire=None, language=None):
+    """Pastes things to https://zifb.in
 
-usage: cat file | zifbin -e <seconds>
-
-e: If specified, passes in expiration in seconds
-    """
+usage: cat file | zifbin -e <seconds> -l <language>
+e: If specified, expire in this many seconds
+l: If specified, use this language for display"""
     ##Read config from .zifb.in.rc (if it exists)
     try: 
         json_config=open(os.path.expanduser('~')+'/.zifbin.rc', "r").read()
@@ -38,7 +36,10 @@ e: If specified, passes in expiration in seconds
         payload['expiration'] = expire
     else:
         payload['expiration'] = config.get('expiration') if config.has_key('expiration') else 0
-     
+    
+    if language:
+        payload['language'] = language
+        
     r = requests.post(url, data=json.dumps(payload))
     
     output = json.loads(r.text)
@@ -50,17 +51,21 @@ e: If specified, passes in expiration in seconds
 
 if __name__ == '__main__':
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "e:h")
+        opts, args = getopt.getopt(sys.argv[1:], "e:l:h")
     except getopt.GetoptError as err:
         print str(err)
         print paste.__doc__
         sys.exit(2)
+
+    expire = None
+    language = None
 
     for o,a in opts:
         if o == '-h':
             print paste.__doc__
             sys.exit()
         elif o == '-e':
-            paste(a)
-            sys.exit()
-    paste()
+            expire = a
+        elif o == '-l':
+            language = a
+    paste(expire, language)

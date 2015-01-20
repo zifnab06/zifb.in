@@ -1,5 +1,6 @@
 {
     "api_token": null,
-    "domain": null
+    "domain": null,
+    "expiration": 0
 }
 

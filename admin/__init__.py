@@ -28,6 +28,7 @@ class UserModel(SecureModelView):
 
 class PasteModel(SecureModelView):
     list_display = ('name', 'paste', 'time', 'expire', 'user', 'views', 'language')
+    column_searchable_list = ('name', 'paste')
 
 class ApiKeyModel(SecureModelView):
     pass

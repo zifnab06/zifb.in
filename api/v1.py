@@ -36,7 +36,7 @@ def paste():
             s = int(s)
         except ValueError:
             return json.dumps({'error': 'invalid expiration format, should be number of seconds'})
-        if s is None:
+        if s is None or s == 0:
             expiration = None
         else:
             expiration = arrow.utcnow().replace(seconds=+s).datetime

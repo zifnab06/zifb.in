@@ -1,0 +1,66 @@
+#!/usr/bin/python
+
+import getopt
+import json
+import os
+import requests
+import sys
+
+##Pastes things to zifb.in
+def paste(expire=None):
+    """
+Pastes things to https://zifb.in
+
+usage: cat file | zifbin -e <seconds>
+
+e: If specified, passes in expiration in seconds
+    """
+    ##Read config from .zifb.in.rc (if it exists)
+    try: 
+        json_config=open(os.path.expanduser('~')+'/.zifbin.rc', "r").read()
+        config = json.loads(json_config)
+    except Exception as e:
+        config = {}
+
+
+    url = 'https://zifb.in/api/v1/paste'
+    data = ''
+    
+    for line in sys.stdin:
+        data += line
+    payload = {'paste': data}
+    if config.has_key('api_key') and config.get('api_key') is not None:
+        payload['api_key'] = config.get('api_key')
+    if config.has_key('domain') and config.get('domain') is not None:
+        payload['domain'] = config.get('domain')
+
+    if expire:
+        payload['expiration'] = expire
+    else:
+        payload['expiration'] = config.get('expiration') if config.has_key('expiration') else 0
+     
+    r = requests.post(url, data=json.dumps(payload))
+    
+    output = json.loads(r.text)
+    
+    if output.has_key('error'):
+        print 'Error: {0}'.format(output.get('error'))
+    elif output.has_key('paste'):
+        print output.get('paste')
+
+if __name__ == '__main__':
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "e:h")
+    except getopt.GetoptError as err:
+        print str(err)
+        print paste.__doc__
+        sys.exit(2)
+
+    for o,a in opts:
+        if o == '-h':
+            print paste.__doc__
+            sys.exit()
+        elif o == '-e':
+            paste(a)
+        else:
+            paste()

@@ -1,0 +1,5 @@
+May need to install requests (pip install requests). 
+
+Drop it in your $PATH, and do 'cat file | zifbin'. To set expiration, do a '-e <time-in-seconds>'. 
+
+Drop .zifbin.rc in $HOME, edit as needed

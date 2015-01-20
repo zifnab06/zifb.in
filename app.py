@@ -1,8 +1,8 @@
 ___author__ = 'zifnab'
-from flask import Flask, redirect, request, render_template, flash, abort, Response
+from flask import Flask, redirect, request, render_template, flash, abort, Response, url_for
 from mongoengine import connect
 from flask_debugtoolbar import DebugToolbarExtension
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user, fresh_login_required
 from flask_wtf import Form, RecaptchaField
 from wtforms.fields import *
 from wtforms.validators import *
@@ -145,7 +145,7 @@ with app.app_context():
     def my():
         if not current_user.is_authenticated():
             abort(403)
-        pastes = database.Paste.objects(user=current_user.to_dbref())
+        pastes = database.Paste.objects(user=current_user.to_dbref()).order_by('-expire', '-time')
         if pastes.count() == 0:
             pastes = None
         return render_template("my_pastes.html", pastes=pastes, title="My Pastes")
@@ -158,6 +158,32 @@ with app.app_context():
             abort(404)
         else:
             return Response(paste.paste, mimetype="text/plain")
+
+    @app.route('/settings')
+    @fresh_login_required
+    def settings():
+        keys = database.ApiKey.objects(user=current_user.to_dbref())
+        return render_template('settings.html', keys=keys)
+
+    @app.route('/settings/new_api_key', methods=('POST',))
+    @fresh_login_required
+    def new_api_key():
+        key = random_string(size=32)
+        api_key = database.ApiKey(user=current_user.to_dbref(), key=key)
+        api_key.save()
+        return redirect(url_for('settings'))
+
+    @app.route('/settings/delete_api_key/<string:key>', methods=('POST',))
+    @fresh_login_required
+    def delete_api_key(key):
+        api_key = database.ApiKey.objects(key=key).first()
+        print not api_key
+        print api_key.user == current_user.to_dbref()
+        if api_key and api_key.user.to_dbref() == current_user.to_dbref():
+            api_key.delete()
+        else:
+            abort(403)
+        return redirect(url_for('settings'))
 
     #THIS ROUTE NEEDS TO BE LAST
     @app.route('/<string:id>', methods=('POST', 'GET'))

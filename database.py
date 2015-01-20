@@ -3,7 +3,7 @@ __author__ = 'zifnab'
 from datetime import datetime
 
 from mongoengine import Document
-from mongoengine import StringField, DateTimeField, ReferenceField, IntField, BooleanField
+from mongoengine import StringField, DateTimeField, ReferenceField, IntField, BooleanField, ListField
 from flask_login import UserMixin
 
 
@@ -43,3 +43,10 @@ class Paste(Document):
 
     def __str__(self):
         return name
+
+class ApiKey(Document):
+    key = StringField(required=True, unique=True, max_length=32, min_length=32)
+    user = ReferenceField(User, required=True)
+
+    def __str__(self):
+        return '{0}:{1}'.format(self.user, self.key)

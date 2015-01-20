@@ -1,8 +1,15 @@
 {% extends "base.html" %}
 {% block body %}
 <div class="pure-g-r">
-    <div class="pure-u-1-5"></div>
-    <div class="pure-u-3-5">
+    <div class="pure-u-1-12"></div>
+    <div class="pure-u-5-6">
+        <style scoped>
+            .button-delete {
+                color: white;
+                border-radius: 4px;
+                text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+                background: rgb(202, 60, 60);
+        </style>
 
         {% if pastes %}
         <table class="pure-table" align="center">
@@ -12,6 +19,7 @@
                 <th>Expires</th>
                 <th>Views</th>
                 <th>Contents</th>
+                <th>Delete</th>
             </tr>
             {% for paste in pastes %}
             <tr>
@@ -20,6 +28,10 @@
                 <td>{% if paste.expire %}{{paste.expire|prettytime}}{% endif %}</td>
                 <td>{{paste.views}}</td>
                 <td>{{paste.paste|truncate(40, killwords=True, end='...') }}</td>
+                <td><form class="pure-form" action="/{{paste.name}}/delete" method="POST">
+                    <button class="button-delete pure-button" name="delete" onclick="{return confirmDelete();}">Delete</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </table>
@@ -29,7 +41,14 @@
 
         {% endif %}
     </div>
-    <div class="pure-u-1-5"></div>
+    <div class="pure-u-1-12"></div>
 </div>
+<script>
+function confirmDelete() {
+    var answer=confirm("Are you sure you want to delete this? It can't be undone");
+    return answer;
+}
 
+
+</script>
 {% endblock %}

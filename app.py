@@ -187,6 +187,16 @@ with app.app_context():
             abort(403)
         return redirect(url_for('settings'))
 
+    @app.route('/<string:id>/delete', methods=('POST',))
+    def delete(id):
+        paste = database.Paste.objects(name=id).first()
+        if not paste:
+            abort(404)
+        if paste.user.to_dbref() != current_user.to_dbref():
+            abort(403)
+        paste.delete()
+        return redirect('/my')
+
     #THIS ROUTE NEEDS TO BE LAST
     @app.route('/<string:id>', methods=('POST', 'GET'))
     def get(id):

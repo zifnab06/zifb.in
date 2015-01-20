@@ -17,7 +17,7 @@ e: If specified, passes in expiration in seconds
     """
     ##Read config from .zifb.in.rc (if it exists)
     try: 
-        json_config=open(os.path.expanduser('~')+'/config/zifbin.rc', "r").read()
+        json_config=open(os.path.expanduser('~')+'/.config/zifbin.rc', "r").read()
         config = json.loads(json_config)
     except Exception as e:
         config = {}

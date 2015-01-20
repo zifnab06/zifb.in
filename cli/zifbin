@@ -62,5 +62,5 @@ if __name__ == '__main__':
             sys.exit()
         elif o == '-e':
             paste(a)
-        else:
-            paste()
+            sys.exit()
+    paste()

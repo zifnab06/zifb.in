@@ -52,6 +52,8 @@ with app.app_context():
     import admin
     toolbar = DebugToolbarExtension(app)
 
+    from api import v1
+
     def get_lexers():
         yield ('none', 'Automatically Detect')
         yield ('markdown', 'markdown')

@@ -1,42 +1,35 @@
 {% extends 'base.html' %}
 {% block topbar %}
+<li><a href="/raw/{{paste.name}}">Raw</a></li>
+<li class="divider"></li>
 <li><a>Date: {{paste.time|prettytime}}</a></li>
-
 {% if paste.language is defined%}
 <li><a>Language: {{paste.language}}</a></li>
 {% endif %}
-
 {% if paste.user.username is defined %}
 <li><a>User: {{paste.user.username}}</a></li>
 {% endif %}
-
 <li><a>Views: {{paste.views}}</a></li>
-
 {% if paste.expire %}
 <li><a>Expires: {{paste.expire|humanize}}</a></li>
 {% else %}
 <li><a>Expires: Never</a></li>
 {% endif %}
-
-<li><a href="/raw/{{paste.name}}">Raw</a></li>
 {% endblock %}
 {% block body %}
-<div class="pure-g">
-    <div class="pure-u-1 pure-u-md-1-5 pure-u-xl-1-8"></div>
-    <div class="pure-u-1 pure-u-md-3-5 pure-u-xl-6-8">
-        {{text|safe}}
-        {% if passworded %}
-        <form class="pure-form" action="" method="POST">
-            <div class="pure-g">
-            <div class="pure-u-1-4"></div>
-            {{form.password(placeholder=form.password.label.text,class="pure-input-1-4")}}  
-            <button type="submit" class="pure-button pure-button-primary pure-input-1-4">Decrypt Paste</button>
-            <div class="pure-u-1-4"></div>
+
+<div class="row">
+    <div class="small-12 small-centered medium-10 medium-centered columns">
+        <div class="row small-collapse">
+            {% if not paste.language == "markdown" %}
+            <div class="small-1 end columns linenumbers"> 
+            <pre class="text-right">{% for i in range(1, lines) %} {{i}} 
+{%endfor%}</pre></div>
+            {% endif %}
+            <div class="small-11 columns">
+        	    {{text|safe}}
             </div>
-        </form>
-        {% endif %}
     </div>
-    <div class="pure-u-1 pure-u-md-1-5 pure-u-xl-1-8"></div>
 </div>
 
 {% endblock %}

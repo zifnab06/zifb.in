@@ -8,7 +8,7 @@
     <div class="pure-u-1-5"></div>
     <div class="pure-u-3-5">
         <form action="" method="post" class="pure-form">
-            {% for error_field in form.errors.values() %}
+{#            {% for error_field in form.errors.values() %}
             {%- for error in error_field %}
             <div class="alert-box alert radius" data-alert>
                 {{ error }}
@@ -16,16 +16,28 @@
             </div>
             {% endfor %}
             {% endfor %}
+#}
 
             {{ form.hidden_tag() }}
-            {{ form.text(placeholder=form.text.label.text, class="pure-input-1") }}
-            <br />
-
-            {{ form.expiration(placeholder=form.expiration.label.text, class='pure-input-1-3') }}
-
-            {{ form.language(placeholder=form.language.label.text, class='pure-input-1-3') }}
-            {{ form.password(placeholder=form.password.label.text, class='pure-input-1-3') }}
-            <button type="submit" class="pure-button pure-button-primary pure-input-1">Paste</button>
+            <div class="row small-collapse">
+                <div class="small-12 columns">
+                    {{ form.text(placeholder=form.text.label.text) }}
+                </div>
+            </div>
+            <div class="row small-collapse">
+                <div class="small-12 medium-4 columns">
+                    {{ form.expiration(placeholder=form.expiration.label.text) }}
+                </div>
+                <div class="small-12 medium-4 columns">
+                    {{ form.language(placeholder=form.language.label.text) }}
+                </div>
+                <div class="small-12 medium-4 columns">
+                </div>
+            </div>
+            <div class="row small-collapse">
+                <div class="small-12 columns">
+                <button type="submit" class="button expand">Paste</button>
+            </div>
         </form>
     </div>
     <div class="pure-u-1-5"></div>

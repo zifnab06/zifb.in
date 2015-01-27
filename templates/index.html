@@ -1,8 +1,0 @@
-{% extends 'base.html' %}
-{% block body %}
-    {% if current_user.is_authenticated() %}
-    welcome back! <a href="{{url_for('paste.new')}}">New paste</a>
-    {% else %}
-    welcome! <a href="{{url_for('paste.new')}}">New paste</a>
-    {% endif %}
-{% endblock %}

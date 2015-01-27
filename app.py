@@ -259,7 +259,10 @@ with app.app_context():
         paste.views += 1
         paste.save()
 
-        return render_template("paste.html", paste=paste, title=title, text=text, form=form, passworded=passworded)
+
+        lines = len(paste.paste.split('\n'))
+
+        return render_template("paste.html", paste=paste, title=title, text=text, form=form, passworded=passworded, lines=lines)
 
 
 

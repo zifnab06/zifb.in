@@ -17,13 +17,20 @@ textarea {
     position: relative;
     height: 1em;
     margin-top: 3em;
-    background: #eee;
     color: #666;
     text-align: center;
     padding: 1em;
     font-size: 80%;
 }
-.linenumbers { background: #E3E3E3; }
+pre {
+    white-space: pre-wrap;       /* CSS 3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+.linenumbers { background: #E3E3E3;}
 .highlight .hll { background-color: #ffffcc }
 .highlight  { background: #f8f8f8; }
 .highlight .c { color: #408080; font-style: italic } /* Comment */

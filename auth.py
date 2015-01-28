@@ -1,7 +1,7 @@
 __author__ = 'zifnab'
 from app import app
 from flask import current_app, request, abort, flash, redirect, render_template
-from flask_login import LoginManager, login_user, current_user, logout_user
+from flask_login import LoginManager, login_user, current_user, logout_user, confirm_login
 from flask_wtf import Form, RecaptchaField
 from database import User
 
@@ -14,6 +14,9 @@ login_manager = LoginManager(app)
 @login_manager.user_loader
 def load_user(user_id):
     return User.objects(username__iexact=user_id).first()
+
+login_manager.login_view = 'login'
+login_manager.refresh_view = 'reauth'
 
 class AuthForm(Form):
     username = StringField('Username*', validators=[Required(message='Please enter your username'), Length(min=3, max=16)])
@@ -32,6 +35,17 @@ class AuthForm(Form):
         else:
             self.user = user
             return True
+
+class ReAuthForm(Form):
+    password = PasswordField('Password*', validators=[Required(message='Please enter your password'), Length(min=8)])
+    def validate(self):
+        rv = Form.validate(self)
+        if rv is None:
+            return False
+        user = authenticate_user(current_user.username, self.password.data)
+        if user is None:
+            return False
+        return True
 
 class RegForm(Form):
     username = StringField('Username*', validators=[Required(message='Please enter your username'), Length(min=3, max=16)])
@@ -94,6 +108,15 @@ def register():
         flash('Thanks for registering!', 'info')
         return redirect('/')
     return render_template('register.html', form=form, title='Register')
+@app.route('/auth/reauth', methods=('POST', 'GET'))
+def reauth():
+    form = ReAuthForm(request.form)
+    if request.method == 'POST' and form.validate():
+        confirm_login()
+        return redirect(request.args.get('next', '/'))
+    else:
+        return render_template('reauth.html', form=form, title='ReAuthenticate')        
+
 #@app.route('/auth/forgotpassword', methods=('POST', 'GET'))
 def pwreset():
     form = ForgotPasswordForm(request.form)

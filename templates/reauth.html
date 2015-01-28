@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="row">
+    <div class="small-12 medium-8 medium-centered large-6 large-centered columns panel">
+        <h4>ReAuthenticate</h4>
+        <hr>
+        Confirm your password to continue
+        <form action="" method="post">
+            {{ form.password(placeholder=form.password.label.text)}}
+            <button type="submit" class="button expand">Verify</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

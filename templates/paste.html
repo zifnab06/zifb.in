@@ -20,7 +20,15 @@
 
 <div class="row">
     <div class="small-12 small-centered medium-10 medium-centered columns">
-        {{text|safe}}
+        <div class="row small-collapse">
+            {% if not paste.language == "markdown" %}
+            <div class="small-1 end columns linenumbers"> 
+            <pre class="text-right">{% for i in range(1, lines) %} {{i}} 
+{%endfor%}</pre></div>
+            {% endif %}
+            <div class="small-11 columns">
+        	    {{text|safe}}
+            </div>
     </div>
 </div>
 

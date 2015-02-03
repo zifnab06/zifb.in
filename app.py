@@ -233,10 +233,7 @@ with app.app_context():
         paste.views += 1
         paste.save()
 
-
-        lines = len(paste.paste.split('\n'))
-
-        return render_template("paste.html", paste=paste, title=title, text=text, lines=lines)
+        return render_template("paste.html", paste=paste, title=title, text=text)
 
 
 

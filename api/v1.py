@@ -42,7 +42,7 @@ def paste():
             expiration = arrow.utcnow().replace(seconds=+s).datetime
 
     if not user and not expiration:
-        expiration = arrow.utcnow().replace(hours=+1).datetime
+        expiration = arrow.utcnow().replace(months=+1).datetime
 
     #Get Domain
     if data.has_key('domain'):

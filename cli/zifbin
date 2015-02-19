@@ -15,7 +15,7 @@ e: If specified, expire in this many seconds
 l: If specified, use this language for display"""
     ##Read config from .zifb.in.rc (if it exists)
     try: 
-        json_config=open(os.path.expanduser('~')+'/.zifbin.rc', "r").read()
+        json_config=open(os.path.expanduser('~')+'/.config/zifbin.rc', "r").read()
         config = json.loads(json_config)
     except Exception as e:
         config = {}

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import getopt
 import json
@@ -27,15 +27,15 @@ l: If specified, use this language for display"""
     for line in sys.stdin:
         data += line
     payload = {'paste': data}
-    if config.has_key('api_key') and config.get('api_key') is not None:
+    if 'api_key' in config and config.get('api_key') is not None:
         payload['api_key'] = config.get('api_key')
-    if config.has_key('domain') and config.get('domain') is not None:
+    if 'domain' in config and config.get('domain') is not None:
         payload['domain'] = config.get('domain')
 
     if expire:
         payload['expiration'] = expire
     else:
-        payload['expiration'] = config.get('expiration') if config.has_key('expiration') else 0
+        payload['expiration'] = config.get('expiration') if 'expiration' in config else 0
     
     if language:
         payload['language'] = language
@@ -44,17 +44,17 @@ l: If specified, use this language for display"""
     
     output = json.loads(r.text)
     
-    if output.has_key('error'):
-        print 'Error: {0}'.format(output.get('error'))
-    elif output.has_key('paste'):
-        print output.get('paste')
+    if 'error' in output:
+        print('Error: {0}'.format(output.get('error')))
+    elif 'paste' in output:
+        print(output.get('paste'))
 
 if __name__ == '__main__':
     try:
         opts, args = getopt.getopt(sys.argv[1:], "e:l:h")
     except getopt.GetoptError as err:
-        print str(err)
-        print paste.__doc__
+        print(str(err))
+        print(paste.__doc__)
         sys.exit(2)
 
     expire = None
@@ -62,7 +62,7 @@ if __name__ == '__main__':
 
     for o,a in opts:
         if o == '-h':
-            print paste.__doc__
+            print(paste.__doc__)
             sys.exit()
         elif o == '-e':
             expire = a

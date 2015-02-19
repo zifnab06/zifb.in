@@ -222,7 +222,9 @@ with app.app_context():
         if not title:
             title = paste.id
         text = paste.paste
-
+        text = text.rstrip('\n')
+        text += '\n'
+        lines = len(text.split('\n'))
         if paste.language == 'none' or paste.language is None:
             paste.language = guess_lexer(text).name
             text=htmlify(text, paste.language)
@@ -234,7 +236,6 @@ with app.app_context():
         paste.save()
 
 
-        lines = len(paste.paste.split('\n'))
 
         return render_template("paste.html", paste=paste, title=title, text=text, lines=lines)
 

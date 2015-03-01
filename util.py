@@ -2,12 +2,14 @@ __author__ = 'zifnab'
 
 import string
 from passlib.hash import sha512_crypt
+from random import SystemRandom
 import database
 from flask_login import login_user
 
+_random = SystemRandom()
+
 def random_string(size=10, chars=string.ascii_letters + string.digits):
-    import random
-    return ''.join(random.choice(chars) for x in range(size))
+    return ''.join(_random.choice(chars) for x in range(size))
 
 def create_user(**kwargs):
     username = kwargs.get('username')

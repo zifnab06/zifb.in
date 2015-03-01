@@ -35,7 +35,7 @@ class User(Document, UserMixin, object):
 class Paste(Document):
     name = StringField(required=True, unique=True)
     paste = StringField(required=True)
-    digest = StringField(required=True)
+    digest = StringField(required=False)
     time = DateTimeField(required=True)
     expire = DateTimeField(required=False)
     user = ReferenceField(User, required=False)

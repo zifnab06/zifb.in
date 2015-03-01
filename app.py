@@ -147,7 +147,10 @@ with app.app_context():
             if form.language.data is not None:
                 paste.language = form.language.data
             else:
-                paste.language = guess_lexer(form.text.data).name
+                try:
+                    paste.language = guess_lexer(form.text.data).name
+                except:
+                    paste.language = 'text'
             paste.time = datetime.utcnow()
 
             if times.get(form.expiration.data) is not None:
@@ -226,12 +229,15 @@ with app.app_context():
         Takes a string, and returns an html encoded string with color formatting
         '''
         if language is None:
-            lexer = guess_lexer(string)
+            try:
+                lexer = guess_lexer(string)
+            except:
+                lexer = get_lexer_by_name('text')
         else:
             try:
                 lexer = get_lexer_by_name(language)
             except:
-                lexer = guess_lexer(string)
+                lexer = get_lexer_by_name('text')
 
         format = HtmlFormatter()
         return highlight(string, lexer, format)
@@ -244,7 +250,10 @@ with app.app_context():
         text += '\n'
         lines = len(text.split('\n'))
         if paste.language == 'none' or paste.language is None:
-            paste.language = guess_lexer(text).name
+            try:
+                paste.language = guess_lexer(text).name
+            except:
+                paste.language = 'text'
             text=htmlify(text, paste.language)
         elif paste.language == 'markdown':
             text=markdown(cgi.escape(text.replace('!','\\!')))

@@ -2,9 +2,10 @@
 
 import getopt
 import json
-import os
+from os import path
 import requests
 import sys
+from xdg import BaseDirectory
 
 ##Pastes things to zifb.in
 def paste(expire=None, language=None):
@@ -14,16 +15,21 @@ usage: cat file | zifbin -e <seconds> -l <language>
 e: If specified, expire in this many seconds
 l: If specified, use this language for display"""
     ##Read config from .zifb.in.rc (if it exists)
-    try: 
-        json_config=open(os.path.expanduser('~')+'/.zifbin.rc', "r").read()
-        config = json.loads(json_config)
-    except Exception as e:
-        config = {}
 
+    config = {}
+    for filename in BaseDirectory.load_config_paths('zifbin', 'config.rc'):
+        with open(filename) as f:
+            config.update(json.load(f))
+    if not config:
+        try:
+            with open(path.join(path.expanduser('~'), '.zifbin.rc')) as f:
+                config.update(json.load(f))
+        except IOError as e:
+            pass
 
     url = 'https://zifb.in/api/v1/paste'
     data = ''
-    
+
     for line in sys.stdin:
         data += line
     payload = {'paste': data}
@@ -36,14 +42,14 @@ l: If specified, use this language for display"""
         payload['expiration'] = expire
     else:
         payload['expiration'] = config.get('expiration') if 'expiration' in config else 0
-    
+
     if language:
         payload['language'] = language
-        
+
     r = requests.post(url, data=json.dumps(payload))
-    
+
     output = json.loads(r.text)
-    
+
     if 'error' in output:
         print('Error: {0}'.format(output.get('error')))
     elif 'paste' in output:

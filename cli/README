@@ -7,4 +7,4 @@ Drop 'zifbin' in your $PATH, and do 'zifbin < ./path/to/myfile'. Run
 
 Drop .zifbin.rc in $HOME, edit as needed. If you hate polluting your
 home directory, XDG base directory is also supported; try
-'~/.config/zifnab/config.rc'.
+'~/.config/zifbin/config.rc'.

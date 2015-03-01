@@ -1,6 +1,7 @@
 from app import app, database
 from util import random_string
 from flask import request
+from hashlib import sha1
 
 import arrow
 import json
@@ -48,7 +49,7 @@ def paste():
     if data.has_key('domain'):
         domain = 'https://{0}/'.format(data.get('domain'))
 
-    paste = database.Paste(name='testing', paste=paste, time=arrow.utcnow().datetime,
+    paste = database.Paste(name='testing', paste=paste, digest=sha1(paste.encode('utf-8')).hexdigest(), time=arrow.utcnow().datetime,
                            expire=expiration, user=user, language=language)
     paste.name = random_string()
     while database.Paste.objects(name=paste.name).first():

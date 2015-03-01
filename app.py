@@ -20,11 +20,38 @@ import arrow
 import cgi
 import string
 
+from hashlib import sha1
 
+from werkzeug.routing import BaseConverter
 
 app = Flask(__name__)
 
+class SHA1Converter(BaseConverter):
+    def __init__(self, map):
+        super(SHA1Converter, self).__init__(map)
+        self.regex = '[A-Za-z0-9]{40}'
+
+app.url_map.converters['sha1'] = SHA1Converter
+
 with app.app_context():
+
+    #THIS ROUTE CAN GO WHEREVER THE FUCK IT PLEASES
+    @app.route('/<string:id>')
+    @app.route('/<sha1:digest>')
+    def get(id=None, digest=None):
+        if id:
+            paste = database.Paste.objects(name__exact=id).first()
+        if digest:
+            paste = database.Paste.objects(digest__exact=digest).first()
+
+        if paste is None:
+            abort(404)
+        elif paste.expire is not None and arrow.get(paste.expire) < arrow.utcnow():
+            paste.delete()
+            abort(404)
+        else:
+            return render_paste(paste, title=paste.id)
+
     import auth
     from config import local_config
     app.config.from_object(local_config)
@@ -106,6 +133,7 @@ with app.app_context():
             paste = database.Paste()
 
             paste.paste = form.text.data
+            paste.digest = sha1(paste.paste.encode('utf-8')).hexdigest()
 
             if (current_user.is_authenticated()):
                 paste.user = current_user.to_dbref()
@@ -126,8 +154,7 @@ with app.app_context():
                 paste.expire = arrow.utcnow().replace(**times.get(form.expiration.data)).datetime
             if times.get(form.expiration.data) is None and not current_user.is_authenticated():
                 paste.expire = arrow.utcnow.replace(**times.get(6))
-            
-                
+
             paste.save()
             return redirect('/{id}'.format(id=paste.name))
 
@@ -145,8 +172,13 @@ with app.app_context():
 
 
     @app.route('/raw/<string:id>')
-    def raw(id):
-        paste = database.Paste.objects(name__exact=id).first()
+    @app.route('/raw/<sha1:digest>')
+    def raw(id=None, digest=None):
+        if id:
+            paste = database.Paste.objects(name__exact=id).first()
+        if digest:
+            paste = database.Paste.objects(digest__exact=digest).first()
+
         if paste is None:
             abort(404)
         else:
@@ -187,20 +219,6 @@ with app.app_context():
             abort(403)
         paste.delete()
         return redirect('/my')
-
-    #THIS ROUTE NEEDS TO BE LAST
-    @app.route('/<string:id>', methods=('POST', 'GET'))
-    def get(id):
-
-        paste = database.Paste.objects(name__exact=id).first()
-
-        if paste is None:
-            abort(404)
-        elif paste.expire is not None and arrow.get(paste.expire) < arrow.utcnow():
-            paste.delete()
-            abort(404)
-        else:
-            return render_paste(paste, title=paste.id)
 
 
     def htmlify(string, language=None):
@@ -247,6 +265,3 @@ app.debug = app.config['DEBUG']
 
 def run():
     app.run()
-
-
-

@@ -17,34 +17,35 @@ class PasteAPI(MethodView):
             paste = database.Paste.objects(digest__exact=digest).first()
         if name:
             paste = database.Paste.objects(name__exact=name).first()
+        paste.views += 1
+        paste.save() 
         return json.dumps({'name': paste.name, 'paste': paste.paste, 'digest': paste.digest,
                            'time': str(paste.time), 'expire': str(paste.expire) if paste.expire else None,
                            'user': str(paste.user), 'views': paste.views, 'language': paste.language})
     def post(self):
-        ''make a new paste''
-        try:
-            data = json.loads(request.data)
-        except ValueError:
-            #json.loads throws ValueError if json can't be decoded
-            return json.dumps({'error': 'invalid json'})
-        if not 'paste' in data:
-            #make sure a paste actually exists
-            return json.dumps({'error': 'paste required'})
-
+        '''make a new paste'''
+        if not 'paste' in request.form:
+            return json.dumps({'error':'paste required'})
+        if 'api_key' in request.form:
+            user = database.ApiKey.objects(key=request.form['api_key']).first()
+            if user:
+                user = user.user
+            else:
+                return json.dumps({'error': 'invalid api_key'})
         paste = database.Paste()
         paste.name = random_string()
         #deduplicate paste name
         while database.Paste.objects(name=paste.name).first():
             paste.name = random_string()
-        paste.paste = data['paste']
-        paste.language = data['language'] if 'language' in data else None #TODO: autodetect language here
-        paste.user = database.ApiKey.objects(key=data['api_key']).first().user if 'api_key' in data else None #TODO errors if api_key is invalid, need to catch
+        paste.paste = request.form['paste']
+        paste.language = request.form['language'] if 'language' in request.form else None #TODO: autodetect language here
+        paste.user = user
         paste.digest = sha1(paste.paste.encode('utf-8')).hexdigest()
         paste.time = arrow.utcnow().datetime
-        if 'expiration' in data:
+        if 'expiration' in request.form:
             #expiration needs to be a time in seconds, >0
             try:
-                seconds = int(data['expiration'])
+                seconds = int(request.form['expiration'])
                 if seconds < 0:
                     return json.dumps({'error': 'cannot expire in the past'})
                 if seconds > 0:
@@ -54,18 +55,18 @@ class PasteAPI(MethodView):
 
         paste.save()
         #domain is optional, no validation done. if you feel like using one of the alternatives (vomitb.in, not-pasteb.in), set the domain before sending the paste
-        return 'https://{domain}/{name}'.format(domain=data['domain'] if 'domain' in data else 'zifb.in', name=paste.name)
+        return json.dumps({'success': 1, 'url': 'https://{domain}/{name}'.format(domain=request.form['domain'] if 'domain' in request.form else 'zifb.in', name=paste.name)})
 
     def delete(self, digest=None, name=None):
         '''delete a paste, either by name or digest. verify user is owner'''
-        try:
-            data = json.loads(request.data)
-        except ValueError:
-            return json.dumps({'error': 'invalid json'})
-        if not 'api_key' in data:
-            #require an api key
+        if not 'api_key' in request.form:
             return json.dumps({'error': 'api_key required'})
-        user = database.ApiKey.objects(key=data['api_key']).first().user
+        user = database.ApiKey.objects(key=request.form['api_key']).first()
+        
+        if not user:
+            return json.dumps({'error': 'invalid api_key'})
+        else:
+            user = user.user
         if digest:
             paste = database.Paste.objects(user=user, digest=digest).first()
         elif name:

@@ -8,12 +8,14 @@ import sys
 from xdg import BaseDirectory
 
 ##Pastes things to zifb.in
-def paste(expire=None, language=None):
+def paste(expire=None, language=None, filename=None):
     """Pastes things to https://zifb.in
 
-usage: cat file | zifbin -e <seconds> -l <language>
+usage: cat file | zifbin [-e <seconds>] [-l <language>] <[filename]>
 e: If specified, expire in this many seconds
-l: If specified, use this language for display"""
+l: If specified, use this language for display
+filename: if omitted, will read from stdin
+"""
     ##Read config from .zifb.in.rc (if it exists)
 
     config = {}
@@ -30,8 +32,17 @@ l: If specified, use this language for display"""
     url = 'https://zifb.in/api/v1/paste'
     data = ''
 
-    for line in sys.stdin:
-        data += line
+    if filename: 
+        try:
+            with open(filename) as f:
+                data = f.read()
+        except:
+            print 'file not found'
+            sys.exit(-1)
+    else:
+        for line in sys.stdin:
+            data += line
+
     payload = {'paste': data}
     if 'api_key' in config and config.get('api_key') is not None:
         payload['api_key'] = config.get('api_key')
@@ -57,7 +68,7 @@ l: If specified, use this language for display"""
 
 if __name__ == '__main__':
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "e:l:h")
+        opts, args = getopt.getopt(sys.argv[1:], "e:l:h:")
     except getopt.GetoptError as err:
         print(str(err))
         print(paste.__doc__)
@@ -65,7 +76,8 @@ if __name__ == '__main__':
 
     expire = None
     language = None
-
+    filename = None
+    
     for o,a in opts:
         if o == '-h':
             print(paste.__doc__)
@@ -74,4 +86,7 @@ if __name__ == '__main__':
             expire = a
         elif o == '-l':
             language = a
-    paste(expire, language)
+    if len(args) > 0:
+        filename = args[0]
+
+    paste(expire, language, filename)

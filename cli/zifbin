@@ -37,7 +37,7 @@ filename: if omitted, will read from stdin
             with open(filename) as f:
                 data = f.read()
         except:
-            print 'file not found'
+            print('Error: could not open file or not found')
             sys.exit(-1)
     else:
         for line in sys.stdin:

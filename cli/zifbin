@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
-import getopt
+import argparse
 import json
 from os import path
 import requests
@@ -11,14 +11,7 @@ from xdg import BaseDirectory
 
 ##Pastes things to zifb.in
 def paste(expire=None, language=None, filename=None, tee=True):
-    """Pastes things to https://zifb.in
-
-usage: cat file | zifbin [-e <seconds>] [-l <language>] [-t] <[filename]>
-e: If specified, expire in this many seconds
-l: If specified, use this language for display
-t: If specified, copy stdin to stdout, and output on stderr
-filename: if omitted, will read from stdin
-"""
+    """Pastes things to https://zifb.in"""
     ##Read config from .zifb.in.rc (if it exists)
 
     config = {}
@@ -76,29 +69,16 @@ filename: if omitted, will read from stdin
         print(data)
 
 if __name__ == '__main__':
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "e:l:h:t")
-    except getopt.GetoptError as err:
-        print(str(err))
-        print(paste.__doc__)
-        sys.exit(2)
+    parser = argparse.ArgumentParser(description="Paste things!")
+    parser.add_argument("-e", "--expire", type=int, nargs=1,
+                        help="Number of minutes until expiration. Default: 1 week.")
+    parser.add_argument("-l", "--language", type=str, nargs=1,
+                        help="Sets language. Default: server guesses language using pygments.")
+    parser.add_argument("-t", "--tee", default=not sys.stdout.isatty(), const=True, type=bool, nargs="?",
+                        help="Sends stdin to stdout, and prints URL on stderr. Default: False for normal usage, True if stdout is not a tty (ie, you're piping output somewhere)")
+    parser.add_argument("filename", type=str, nargs='?',
+                        help="If ommited, read from stdin.")
+    args = parser.parse_args()
 
-    expire = None
-    language = None
-    filename = None
-    tee = None
 
-    for o,a in opts:
-        if o == '-h':
-            print(paste.__doc__)
-            sys.exit()
-        elif o == '-e':
-            expire = a
-        elif o == '-l':
-            language = a
-        elif o == '-t':
-            tee = True
-    if len(args) > 0:
-        filename = args[0]
-
-    paste(expire, language, filename, tee)
+    paste(expire=args.expire, language=args.language, tee=args.tee, filename=args.filename)

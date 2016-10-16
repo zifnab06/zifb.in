@@ -2,7 +2,7 @@ __author__ = 'zifnab'
 from app import app
 from flask import current_app, request, abort, flash, redirect, render_template
 from flask_login import LoginManager, login_user, current_user, logout_user, confirm_login
-from flask_wtf import Form, RecaptchaField
+from flask_wtf import FlaskForm, RecaptchaField
 from database import User
 
 from wtforms.fields import StringField, BooleanField, PasswordField
@@ -18,13 +18,13 @@ def load_user(user_id):
 login_manager.login_view = 'login'
 login_manager.refresh_view = 'reauth'
 
-class AuthForm(Form):
+class AuthForm(FlaskForm):
     username = StringField('Username*', validators=[Required(message='Please enter your username'), Length(min=3, max=16)])
     password = PasswordField('Password*', validators=[Required(message='Please enter your password'), Length(min=8)])
     remember = BooleanField("Remember Account?", validators=[], default=True)
 
     def validate(self):
-        rv = Form.validate(self)
+        rv = FlaskForm.validate(self)
         if rv is None:
             return False
 
@@ -36,10 +36,10 @@ class AuthForm(Form):
             self.user = user
             return True
 
-class ReAuthForm(Form):
+class ReAuthForm(FlaskForm):
     password = PasswordField('Password*', validators=[Required(message='Please enter your password'), Length(min=8)])
     def validate(self):
-        rv = Form.validate(self)
+        rv = FlaskForm.validate(self)
         if rv is None:
             return False
         user = authenticate_user(current_user.username, self.password.data)
@@ -47,7 +47,7 @@ class ReAuthForm(Form):
             return False
         return True
 
-class RegForm(Form):
+class RegForm(FlaskForm):
     username = StringField('Username*', validators=[Required(message='Please enter your username'), Length(min=3, max=16)])
     email = StringField('Email', validators=[])
     password = PasswordField('Password*', validators=[Required(message='Please enter your password'), Length(min=8)])
@@ -56,7 +56,7 @@ class RegForm(Form):
     recaptcha = RecaptchaField()
 
     def validate(self):
-        rv = Form.validate(self)
+        rv = FlaskForm.validate(self)
         if rv is None:
             return False
 
@@ -69,7 +69,7 @@ class RegForm(Form):
             return False
 
 
-class ForgotPasswordForm(Form):
+class ForgotPasswordForm(FlaskForm):
     username = RegForm.username
     def validate(self):
         user = lookup_user(self.username.data)

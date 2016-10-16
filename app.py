@@ -1,9 +1,9 @@
 ___author__ = 'zifnab'
 from flask import Flask, redirect, request, render_template, flash, abort, Response, url_for
-from mongoengine import connect
+from flask_mongoengine import MongoEngine
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user, fresh_login_required
-from flask_wtf import Form, RecaptchaField
+from flask_wtf import FlaskForm, RecaptchaField
 from wtforms.fields import *
 from wtforms.validators import *
 from passlib.hash import sha512_crypt
@@ -35,7 +35,6 @@ app.url_map.converters['sha1'] = SHA1Converter
 
 with app.app_context():
 
-    #THIS ROUTE CAN GO WHEREVER THE FUCK IT PLEASES
     @app.route('/<string:id>')
     @app.route('/<sha1:digest>')
     def get(id=None, digest=None):
@@ -63,7 +62,7 @@ with app.app_context():
         'flask_debugtoolbar.panels.template.TemplateDebugPanel',
         'flask_debugtoolbar.panels.logger.LoggingPanel',
         'flask_debugtoolbar.panels.profiler.ProfilerDebugPanel',
-        'flask_debugtoolbar_mongo.panel.MongoDebugPanel'
+        'flask_mongoengine.panels.MongoDebugPanel'
         ]
     @app.template_filter('prettytime')
     def format_datetime(value, format='medium'):
@@ -75,7 +74,7 @@ with app.app_context():
 
 
 
-    db = connect('zifbin')
+    db = MongoEngine(app)
     import admin
     toolbar = DebugToolbarExtension(app)
 
@@ -87,7 +86,7 @@ with app.app_context():
         for lexer in sorted(get_all_lexers()):
             yield (lexer[1][0], lexer[0])
 
-    class PasteForm(Form):
+    class PasteForm(FlaskForm):
         text = TextAreaField('Paste Here', validators=[Required()])
         expiration = SelectField('Expiration', choices=[('0', 'Expires Never'),
                                                         ('1', 'Expires In Fifteen Minutes'),
@@ -112,7 +111,7 @@ with app.app_context():
                                                         ('8', 'Expires in One Month')], default='6')
 
 
-    class ConfirmForm(Form):
+    class ConfirmForm(FlaskForm):
         confirm = SubmitField('Click here to confirm deletion', validators=[Required()])
 
     @app.route('/', methods=('POST', 'GET'))
@@ -273,8 +272,11 @@ with app.app_context():
 
         return render_template("paste.html", paste=paste, title=title, text=text, lines=lines)
 
-
-
+@app.cli.command()
+def remove_expired():
+    for paste in database.Paste.objects(expire__lt=arrow.now().datetime):
+        print 'delete {0}'.format(paste.name)
+        paste.delete()
 
 
 app.debug = app.config['DEBUG']

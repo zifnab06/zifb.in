@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 
 import getopt
 import json
@@ -7,13 +8,15 @@ import requests
 import sys
 from xdg import BaseDirectory
 
+
 ##Pastes things to zifb.in
-def paste(expire=None, language=None, filename=None):
+def paste(expire=None, language=None, filename=None, tee=True):
     """Pastes things to https://zifb.in
 
-usage: cat file | zifbin [-e <seconds>] [-l <language>] <[filename]>
+usage: cat file | zifbin [-e <seconds>] [-l <language>] [-t] <[filename]>
 e: If specified, expire in this many seconds
 l: If specified, use this language for display
+t: If specified, copy stdin to stdout, and output on stderr
 filename: if omitted, will read from stdin
 """
     ##Read config from .zifb.in.rc (if it exists)
@@ -28,6 +31,8 @@ filename: if omitted, will read from stdin
                 config.update(json.load(f))
         except IOError as e:
             pass
+    if 'tee' in config and config['tee'] == True:
+        tee = True
 
     url = 'https://zifb.in/api/v1/paste'
     data = ''
@@ -37,7 +42,7 @@ filename: if omitted, will read from stdin
             with open(filename) as f:
                 data = f.read()
         except:
-            print 'file not found'
+            print('file not found', file=sys.stderr)
             sys.exit(-1)
     else:
         for line in sys.stdin:
@@ -57,18 +62,22 @@ filename: if omitted, will read from stdin
     if language:
         payload['language'] = language
 
+
     r = requests.post(url, data=json.dumps(payload))
 
     output = json.loads(r.text)
 
     if 'error' in output:
-        print('Error: {0}'.format(output.get('error')))
+        print('Error: {0}'.format(output.get('error')), file=sys.stderr)
     elif 'paste' in output:
-        print(output.get('paste'))
+        print(output.get('paste'), file=sys.stderr)
+
+    if tee:
+        print(data)
 
 if __name__ == '__main__':
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "e:l:h:")
+        opts, args = getopt.getopt(sys.argv[1:], "e:l:h:t")
     except getopt.GetoptError as err:
         print(str(err))
         print(paste.__doc__)
@@ -77,7 +86,8 @@ if __name__ == '__main__':
     expire = None
     language = None
     filename = None
-    
+    tee = None
+
     for o,a in opts:
         if o == '-h':
             print(paste.__doc__)
@@ -86,7 +96,9 @@ if __name__ == '__main__':
             expire = a
         elif o == '-l':
             language = a
+        elif o == '-t':
+            tee = True
     if len(args) > 0:
         filename = args[0]
 
-    paste(expire, language, filename)
+    paste(expire, language, filename, tee)

@@ -1,3 +1,9 @@
 .idea
 *.pyc
+bin/
+lib/
+include/
+.Python
+pip-selfcheck.json
 config/local_config.py
+

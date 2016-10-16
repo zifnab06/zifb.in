@@ -95,7 +95,10 @@ with app.app_context():
                                                         ('3', 'Expires In One Hour'),
                                                         ('4', 'Expires In Six Hours'),
                                                         ('5', 'Expires in Twelve Hours'),
-                                                        ('6', 'Expires In One Day')], default='0')
+                                                        ('6', 'Expires In One Day'),
+                                                        ('7', 'Expires in One Week'),
+                                                        ('8', 'Expires in One Month')], default='6')
+
         language = SelectField('Language', choices=[i for i in get_lexers()])
 
     class PasteFormNoAuth(PasteForm):
@@ -104,7 +107,9 @@ with app.app_context():
                                                         ('3', 'Expires In One Hour'),
                                                         ('4', 'Expires In Six Hours'),
                                                         ('5', 'Expires in Twelve Hours'),
-                                                        ('6', 'Expires In One Day')], default='6')
+                                                        ('6', 'Expires In One Day'),
+                                                        ('7', 'Expires in One Week'),
+                                                        ('8', 'Expires in One Month')], default='6')
 
 
     class ConfirmForm(Form):

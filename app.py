@@ -128,7 +128,9 @@ with app.app_context():
                 '3':{'hours':+1},
                 '4':{'hours':+6},
                 '5':{'hours':+12},
-                '6':{'days':+1}
+                '6':{'days':+1},
+                '7':{'weeks':+1},
+                '8':{'months':+1}
             }
             paste = database.Paste()
 
@@ -156,7 +158,7 @@ with app.app_context():
             if times.get(form.expiration.data) is not None:
                 paste.expire = arrow.utcnow().replace(**times.get(form.expiration.data)).datetime
             if times.get(form.expiration.data) is None and not current_user.is_authenticated():
-                paste.expire = arrow.utcnow.replace(**times.get(6))
+                paste.expire = arrow.utcnow.replace(**times.get(7))
 
             paste.save()
             return redirect('/{id}'.format(id=paste.name))

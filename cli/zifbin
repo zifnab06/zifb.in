@@ -9,6 +9,13 @@ import sys
 from xdg import BaseDirectory
 
 
+try:
+    import requests.packages.urllib3.contrib.pyopenssl
+    requests.packages.urllib3.contrib.pyopenssl.inject_into_urllib3()
+except ImportError:
+    pass
+
+
 ##Pastes things to zifb.in
 def paste(expire=None, language=None, filename=None, tee=True):
     """Pastes things to https://zifb.in"""

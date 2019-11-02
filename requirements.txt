@@ -9,7 +9,7 @@ Flask-DebugToolbar==0.10.0
 Flask-Login==0.2.11
 flask-mongoengine==0.8
 Flask-WTF==0.13.1
-gunicorn==19.4.5
+gunicorn==19.5.0
 itsdangerous==0.24
 Jinja2==2.8
 markdown2==2.3.1

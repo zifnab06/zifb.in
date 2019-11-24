@@ -1,5 +1,3 @@
-__author__ = 'zifnab'
-
 import string
 from passlib.hash import sha512_crypt
 from random import SystemRandom

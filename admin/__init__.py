@@ -1,4 +1,3 @@
-__author__ = 'zifnab'
 from database import User, Paste, ApiKey
 from flask import abort, current_app
 from flask_login import current_user

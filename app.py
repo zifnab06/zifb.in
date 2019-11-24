@@ -1,4 +1,3 @@
-___author__ = 'zifnab'
 from flask import Flask, redirect, request, render_template, flash, abort, Response, url_for
 from flask_mongoengine import MongoEngine
 from flask_debugtoolbar import DebugToolbarExtension

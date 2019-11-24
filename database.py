@@ -1,5 +1,3 @@
-__author__ = 'zifnab'
-
 from datetime import datetime
 
 from mongoengine import Document

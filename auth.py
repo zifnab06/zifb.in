@@ -1,4 +1,3 @@
-__author__ = 'zifnab'
 from app import app
 from flask import current_app, request, abort, flash, redirect, render_template
 from flask_login import LoginManager, login_user, current_user, logout_user, confirm_login

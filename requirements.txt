@@ -20,7 +20,6 @@ Pygments==2.4.2
 pymongo==3.9.0
 python-dateutil==2.8.1
 pytzdata==2019.3
-simple-crypt==4.1.7
 six==1.13.0
 terminaltables==3.1.0
 Werkzeug==0.16.0

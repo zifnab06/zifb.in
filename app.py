@@ -61,9 +61,9 @@ with app.app_context():
             return render_paste(paste, title=paste.id)
 
     import auth  # noqa: F401
-    from config import local_config
+    import config
 
-    app.config.from_object(local_config)
+    app.config.from_object(config)
     app.config["DEBUG_TB_PANELS"] = [
         "flask_debugtoolbar.panels.versions.VersionDebugPanel",
         "flask_debugtoolbar.panels.timer.TimerDebugPanel",

@@ -1,11 +1,14 @@
-__author__ = 'zifnab'
-
 from datetime import datetime
 
 from mongoengine import Document
-from mongoengine import StringField, DateTimeField, ReferenceField, IntField, BooleanField, ListField
+from mongoengine import (
+    StringField,
+    DateTimeField,
+    ReferenceField,
+    IntField,
+    BooleanField,
+)
 from flask_login import UserMixin
-
 
 
 class User(Document, UserMixin, object):
@@ -17,17 +20,18 @@ class User(Document, UserMixin, object):
 
     def is_authenticated(self):
         return True
+
     def is_anonymous(self):
         return False
+
     def is_active(self):
         return True
+
     def get_id(self):
         return self.username
 
-    meta = {
-        'index': ['username'],
-        'collection': 'users'
-    }
+    meta = {"index": ["username"], "collection": "users"}
+
     def __str__(self):
         return self.username
 
@@ -43,11 +47,12 @@ class Paste(Document):
     language = StringField(required=False)
 
     def __str__(self):
-        return name
+        return self.name
+
 
 class ApiKey(Document):
     key = StringField(required=True, unique=True, max_length=32, min_length=32)
     user = ReferenceField(User, required=True)
 
     def __str__(self):
-        return '{0}:{1}'.format(self.user, self.key)
+        return "{0}:{1}".format(self.user, self.key)

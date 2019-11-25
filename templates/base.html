@@ -32,7 +32,7 @@
 
     <section class="top-bar-section">
         <ul class="left">
-            {% if current_user.is_authenticated() %}
+            {% if current_user.is_authenticated %}
             <li><a href="{{ url_for('my') }}">My Pastes</a></li>
             <li><a href="{{ url_for('settings') }}">Settings</a></li>
             {% if current_user.admin %}
@@ -44,7 +44,7 @@
         </ul>
         <ul class="right">
 
-            {% if current_user.is_authenticated() %}
+            {% if current_user.is_authenticated %}
             <li><a href="{{ url_for('logout') }}">Logout</a></li>
             {% else %}
             <li><a href="{{ url_for('login') }}">Login</a></li>

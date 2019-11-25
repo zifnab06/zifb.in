@@ -1,10 +1,12 @@
+import json
+
 from app import app, database
 from util import random_string
 from flask import request
 from hashlib import sha1
 
-import arrow
-import json
+import pendulum
+
 @app.route('/api/v1/paste', methods=('POST',))
 def paste():
     paste = None
@@ -40,16 +42,16 @@ def paste():
         if s is None or s == 0:
             expiration = None
         else:
-            expiration = arrow.utcnow().replace(seconds=+s).datetime
+            expiration = pendulum.now("UTC").add(seconds=s)
 
     if not user and not expiration:
-        expiration = arrow.utcnow().replace(hours=+1).datetime
+        expiration = pendulum.now("UTC").add(hours=1)
 
     #Get Domain
     if data.has_key('domain'):
         domain = 'https://{0}/'.format(data.get('domain'))
 
-    paste = database.Paste(name='testing', paste=paste, digest=sha1(paste.encode('utf-8')).hexdigest(), time=arrow.utcnow().datetime,
+    paste = database.Paste(name='testing', paste=paste, digest=sha1(paste.encode('utf-8')).hexdigest(), time=pendulum.now('utc'),
                            expire=expiration, user=user, language=language)
     paste.name = random_string()
     while database.Paste.objects(name=paste.name).first():
@@ -57,4 +59,4 @@ def paste():
 
     paste.save()
     return json.dumps({'paste': '{0}{1}'.format(domain, paste.name),
-                       'expires': arrow.get(paste.expire).format('YYYY/MM/DD hh:mm')})
+                       'expires': pendulum.instance(paste.expire).to_datetime_string()})

@@ -83,7 +83,7 @@ class ForgotPasswordForm(FlaskForm):
 @app.route('/auth/login', methods=('POST', 'GET'))
 def login():
     form = AuthForm(request.form)
-    if current_user.is_authenticated():
+    if current_user.is_authenticated:
         return redirect('/')
     if request.method == 'POST' and form.validate():
         user = form.user
@@ -93,7 +93,7 @@ def login():
 
 @app.route('/auth/logout')
 def logout():
-    if not current_user.is_authenticated():
+    if not current_user.is_authenticated:
         abort(403)
     logout_user()
     flash('You have been logged out', 'info')

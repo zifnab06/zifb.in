@@ -15,8 +15,8 @@ from simplecrypt import encrypt, decrypt
 from binascii import hexlify
 from util import random_string
 import database
-import arrow
 import cgi
+import pendulum
 import string
 
 from hashlib import sha1
@@ -42,9 +42,9 @@ with app.app_context():
         if digest:
             paste = database.Paste.objects(digest__exact=digest).first()
 
-        if paste is None:
+        if not paste:
             abort(404)
-        elif paste.expire is not None and arrow.get(paste.expire) < arrow.utcnow():
+        elif paste.expire and paste.expire < pendulum.now('utc').naive():
             paste.delete()
             abort(404)
         else:
@@ -65,11 +65,11 @@ with app.app_context():
         ]
     @app.template_filter('prettytime')
     def format_datetime(value, format='medium'):
-        return arrow.get(value).format('YYYY-MM-DD HH:mm')
+        return pendulum.instance(value).to_datetime_string()
 
     @app.template_filter('humanize')
     def humanize_date(value):
-        return arrow.get(value).humanize()
+        return pendulum.instance(value).diff_for_humans()
 
 
 
@@ -116,10 +116,9 @@ with app.app_context():
     @app.route('/', methods=('POST', 'GET'))
     @app.route('/new', methods=('POST', 'GET'))
     def main():
-        if current_user.is_authenticated():
+        if current_user.is_authenticated:
             form = PasteForm(request.form)
         else:
-            print 'test'
             form = PasteFormNoAuth(request.form)
 
         if form.validate_on_submit():
@@ -140,16 +139,16 @@ with app.app_context():
             paste.paste = form.text.data
             paste.digest = sha1(paste.paste.encode('utf-8')).hexdigest()
 
-            if (current_user.is_authenticated()):
+            if current_user.is_authenticated:
                 paste.user = current_user.to_dbref()
             #Create a name and make sure it doesn't exist
             paste.name = random_string()
             collision_check = database.Paste.objects(name__exact=paste.name).first()
-            while collision_check is not None:
+            while collision_check:
                 paste.name = random_string()
                 collision_check = database.Paste.objects(name__exact=paste.name).first()
 
-            if form.language.data is not None:
+            if form.language.data:
                 paste.language = form.language.data
             else:
                 try:
@@ -158,10 +157,10 @@ with app.app_context():
                     paste.language = 'text'
             paste.time = datetime.utcnow()
 
-            if times.get(form.expiration.data) is not None:
-                paste.expire = arrow.utcnow().replace(**times.get(form.expiration.data)).datetime
-            if times.get(form.expiration.data) is None and not current_user.is_authenticated():
-                paste.expire = arrow.utcnow.replace(**times.get(7))
+            if times.get(form.expiration.data):
+                paste.expire = pendulum.now('utc').add(**times.get(form.expiration.data))
+            if not times.get(form.expiration.data) and not current_user.is_authenticated:
+                paste.expire = pendulum.now('utc').add(**times.get(7))
 
             paste.save()
             return redirect('/{id}'.format(id=paste.name))
@@ -171,7 +170,7 @@ with app.app_context():
 
     @app.route('/my')
     def my():
-        if not current_user.is_authenticated():
+        if not current_user.is_authenticated:
             abort(403)
         pastes = database.Paste.objects(user=current_user.to_dbref()).order_by('-expire', '-time')
         if pastes.count() == 0:
@@ -187,7 +186,7 @@ with app.app_context():
         if digest:
             paste = database.Paste.objects(digest__exact=digest).first()
 
-        if paste is None:
+        if not paste:
             abort(404)
         else:
             return Response(paste.paste, mimetype="text/plain")
@@ -210,8 +209,6 @@ with app.app_context():
     @fresh_login_required
     def delete_api_key(key):
         api_key = database.ApiKey.objects(key=key).first()
-        print not api_key
-        print api_key.user == current_user.to_dbref()
         if api_key and api_key.user.to_dbref() == current_user.to_dbref():
             api_key.delete()
         else:
@@ -233,7 +230,7 @@ with app.app_context():
         '''
         Takes a string, and returns an html encoded string with color formatting
         '''
-        if language is None:
+        if not language:
             try:
                 lexer = guess_lexer(string)
             except:
@@ -254,7 +251,7 @@ with app.app_context():
         text = text.rstrip('\n')
         text += '\n'
         lines = len(text.split('\n'))
-        if paste.language == 'none' or paste.language is None:
+        if paste.language == 'none' or not paste.language:
             try:
                 paste.language = guess_lexer(text).name
             except:
@@ -273,8 +270,8 @@ with app.app_context():
 
 @app.cli.command()
 def remove_expired():
-    for paste in database.Paste.objects(expire__lt=arrow.now().datetime):
-        print 'delete {0}'.format(paste.name)
+    for paste in database.Paste.objects(expire__lt=pendulum.now("utc")):
+        print(f'delete {paste.name}')
         paste.delete()
 
 

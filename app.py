@@ -267,7 +267,7 @@ with app.app_context():
             except pygments.util.ClassNotFound:
                 lexer = get_lexer_by_name("text")
 
-        format = pygments.formatters.HtmlFormatter(linenos='inline')
+        format = pygments.formatters.HtmlFormatter(linenos="inline")
         return pygments.highlight(string, lexer, format)
 
     def render_paste(paste, title=None):

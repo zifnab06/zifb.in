@@ -22,6 +22,16 @@
 <script>toastr.{{category}}("{{message}}")</script>
 {% endfor %}
 
+{% if form %}
+{% for field in form.errors %}
+{% for error in form.errors[field] %}
+{% if "CSRF" not in error %}
+<script>toastr.error("{{error}}")</script>
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endif %}
+
 <nav class="top-bar" data-topbar role="navigation">
     <ul class="title-area">
         <li class="name">

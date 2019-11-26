@@ -78,7 +78,7 @@ class RegForm(FlaskForm):
             Length(min=3, max=16),
         ],
     )
-    email = StringField("Email", validators=[Email])
+    email = StringField("Email", validators=[Email()])
     password = PasswordField(
         "Password*",
         validators=[Required(message="Please enter your password"), Length(min=8)],
@@ -141,8 +141,8 @@ def logout():
 
 @app.route("/auth/register", methods=("POST", "GET"))
 def register():
-    form = RegForm(request.form)
-    if request.method == "POST" and form.validate():
+    form = RegForm()
+    if form.validate_on_submit():
         create_user(**form.data)
         flash("Thanks for registering!", "info")
         return redirect("/")
@@ -152,7 +152,7 @@ def register():
 @app.route("/auth/reauth", methods=("POST", "GET"))
 def reauth():
     form = ReAuthForm(request.form)
-    if request.method == "POST" and form.validate():
+    if form.validate_on_submit():
         confirm_login()
         return redirect(request.args.get("next", "/"))
     else:
@@ -162,7 +162,7 @@ def reauth():
 # @app.route('/auth/forgotpassword', methods=('POST', 'GET'))
 def pwreset():
     form = ForgotPasswordForm(request.form)
-    if request.method == "POST" and form.validate():
+    if form.validate_on_submit():
         # Email Link to reset password
         pass
 

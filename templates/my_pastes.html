@@ -1,37 +1,39 @@
 {% extends "base.html" %}
 {% block body %}
-<div class="row">
-    <div class="small-12 medium-10 medium-centered columns">
+<div class="container">
+    <div class="row">
+        <div class="small-12 medium-10 medium-centered columns">
 
-        {% if pastes %}
-        <table class="pure-table" align="center">
-            <tr>
-                <th>ID</th>
-                <th>Time</th>
-                <th>Expires</th>
-                <th>Views</th>
-                <th>Contents</th>
-                <th>Delete</th>
-            </tr>
-            {% for paste in pastes %}
-            <tr>
-                <td><a href="/{{ paste.name }}">{{ paste.name }}</a></td>
-                <td>{{paste.time|prettytime}}</td>
-                <td>{% if paste.expire %}{{paste.expire|prettytime}}{% endif %}</td>
-                <td>{{paste.views}}</td>
-                <td>{{paste.paste|truncate(40, killwords=True, end='...') }}</td>
-                <td><form class="pure-form" action="/{{paste.name}}/delete" method="POST">
-                    <button class="button small alert" name="delete" onclick="{return confirmDelete();}">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-        {% else %}
+            {% if pastes %}
+            <table class="table">
+                <tr>
+                    <th>ID</th>
+                    <th>Time</th>
+                    <th>Expires</th>
+                    <th>Views</th>
+                    <th>Contents</th>
+                    <th>Delete</th>
+                </tr>
+                {% for paste in pastes %}
+                <tr>
+                    <td><a href="/{{ paste.name }}">{{ paste.name }}</a></td>
+                    <td>{{paste.time|prettytime}}</td>
+                    <td>{% if paste.expire %}{{paste.expire|prettytime}}{% endif %}</td>
+                    <td>{{paste.views}}</td>
+                    <td>{{paste.paste|truncate(40, killwords=True, end='...') }}</td>
+                    <td><form class="pure-form" action="/{{paste.name}}/delete" method="POST">
+                        <button class="button small alert" name="delete" onclick="{return confirmDelete();}">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
 
-        You have no pastes!
+            You have no pastes!
 
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
 </div>
 <script>

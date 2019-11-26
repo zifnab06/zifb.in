@@ -1,72 +1,52 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title></title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.0/css/foundation.min.css" />
-
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.min.css"/>
-
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="{{url_for('static', filename='app.css')}}" />
-    <style>
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.0/js/vendor/modernizr.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.0/js/vendor/jquery.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.0/js/foundation.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.0/js/foundation/foundation.topbar.js"></script>
-  
 </head>
-<body>
-{% for category, message in get_flashed_messages(with_categories=true) %}
-<script>toastr.{{category}}("{{message}}")</script>
-{% endfor %}
-
-{% if form %}
-{% for field in form.errors %}
-{% for error in form.errors[field] %}
-{% if "CSRF" not in error %}
-<script>toastr.error("{{error}}")</script>
-{% endif %}
-{% endfor %}
-{% endfor %}
-{% endif %}
-
-<nav class="top-bar" data-topbar role="navigation">
-    <ul class="title-area">
-        <li class="name">
-            <h1><a href="{{ url_for('main') }}">{{request.headers['Host']}}</a>
-        </li>
-        <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
-    </ul>
-
-    <section class="top-bar-section">
-        <ul class="left">
-            {% if current_user.is_authenticated %}
-            <li><a href="{{ url_for('my') }}">My Pastes</a></li>
-            <li><a href="{{ url_for('settings') }}">Settings</a></li>
-            {% if current_user.admin %}
-            <li><a href="/admin">Admin</a></li>
-            {%endif%}
-            {%endif%}
-            {% block topbar %} {% endblock %}
-
-        </ul>
-        <ul class="right">
-
-            {% if current_user.is_authenticated %}
-            <li><a href="{{ url_for('logout') }}">Logout</a></li>
-            {% else %}
-            <li><a href="{{ url_for('login') }}">Login</a></li>
-            {% endif %}
-        </ul>
-    </section>
-</nav>
-<br /><br />
-{% block body %}{% endblock %}
-<div class="footer">
-    Powered by <a href="https://zifb.in">zifb.in</a>, an <a href="http://github.com/zifnab06/zifb.in">open source</a> pastebin by zifnab06.
-</div>
-</body>
-
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="{{url_for('main')}}">{{request.headers['Host']}}</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav w-100">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/api">API</a>
+                    </li>
+                    {% block topbar %} {% endblock %}
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item dropdown ml-auto">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarAccount" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Account
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labeledby="navbarAccount">
+                            <a class="dropdown-item" href="{{url_for('settings')}}">Settings</a>
+                            <a class="dropdown-item" href="{{url_for('my')}}">My Pastes</a>
+                            <a class="dropdown-item" href="{{url_for('logout')}}">Logout</a>
+                        </div>
+                    </li>
+                    {% else %}
+                    <li class="nav-item ml-auto">
+                        <a class="nav-link" href="{{url_for('login')}}">Login</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+        <br /><br />
+        {% block body %} {% endblock %}
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    </body>
 </html>

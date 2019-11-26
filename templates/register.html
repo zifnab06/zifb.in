@@ -1,17 +1,37 @@
 {% extends 'base.html' %}
 {% block body %}
-<div class="row">
-    <div class="small-12 medium-8 medium-centered large-6 large-centered columns panel">
-        <h4>Register</h4>
-        <hr>
-        <form action="" method="post">
-            {{ form.username(placeholder=form.username.label.text, class="pure-input-1") }}
-            {{ form.email(placeholder=form.email.label.text, class="pure-input-1", type='email') }}
-            {{ form.password(placeholder=form.password.label.text, class="pure-input-1") }}
-            {{ form.password2(placeholder=form.password2.label.text, class="pure-input-1") }}
-            <button type="submit" class="button expand">Submit</button>
-        </form>
-        <br />
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Reauthenticate</h5>
+                    <hr />
+                    <p class="card-text">
+                        Creating an account will unlock unlimited expiration and allow you to delete pastes.
+                        <form action="" method="post">
+                            <div class="form-group">
+                                <label for="username">{{form.username.label.text}}</label>
+                                {{ form.username(class="form-control") }}
+                            </div>
+                            <div class="form-group">
+                                <label for="email">{{form.email.label.text}}</label>
+                                {{ form.email(class="form-control", type='email') }}
+                                <small class="form-text text-muted">Your email will not be shared. This is only used for account recovery.  </small>
+                            <div class="form-group">
+                                <label for="password">{{form.password.label.text}}</label>
+                                {{ form.password(class="form-control") }}
+                            </div>
+                            <div class="form-group">
+                                <label for="password2">{{form.password2.label.text}}</label>
+                                {{ form.password2(class="form-control") }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

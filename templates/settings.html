@@ -2,26 +2,30 @@
 {% block topbar %}
 {% endblock %}
 {% block body %}
-<div class="row">
-    <div class="small-12 medium-10 medium-centered columns panel">
-        <table width=100%>
-            <tr>
-                <th>API Keys</th>
-                <th>
-                    <form class="pure-form" action="/settings/new_api_key" method="post">
-                        <button type="submit" class="button small">Create API Key</button>
-                    </form>
-                </th>
-            </tr>
-            {% for api_key in keys %}
-                <tr><td>{{api_key.key}}</td><th>
-                    <form class="pure-form" action="/settings/delete_api_key/{{api_key.key}}" method="post">
-                        <button type="submit" class="button small alert">Delete API Key</button>
-                    </form>
-                </th></tr>
-                
-            {% endfor %}
-        </table>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <table width=100% class="table">
+                <tr>
+                    <th>API Keys</th>
+                    <th>
+                        <form action="/settings/new_api_key" method="post">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Create API Key</button>
+                            </div>
+                        </form>
+                    </th>
+                </tr>
+                {% for api_key in keys %}
+                    <tr><td>{{api_key.key}}</td><th>
+                        <form class="pure-form" action="/settings/delete_api_key/{{api_key.key}}" method="post">
+                            <button type="submit" class="button small alert">Delete API Key</button>
+                        </form>
+                    </th></tr>
+                    
+                {% endfor %}
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

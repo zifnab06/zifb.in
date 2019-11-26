@@ -1,35 +1,45 @@
 {% extends 'base.html' %}
 {% block topbar %}
-<li><a href="/raw/{{paste.name}}">Raw</a></li>
 <li class="divider"></li>
-<li><a>Date: {{paste.time|prettytime}}</a></li>
+<li class="nav-item"><a class="nav-link" href="/raw/{{paste.name}}">Raw</a></li>
+<li class="divider"></li>
+<li class="nav-item"><a class="nav-link disabled">Date: {{paste.time|prettytime}}</a></li>
 {% if paste.language is defined%}
-<li><a>Language: {{paste.language}}</a></li>
+<li class="nav-item"><a class="nav-link disabled">Language: {{paste.language}}</a></li>
 {% endif %}
 {% if paste.user.username is defined %}
-<li><a>User: {{paste.user.username}}</a></li>
+<li class="nav-item"><a class="nav-link disabled">User: {{paste.user.username}}</a></li>
 {% endif %}
-<li><a>Views: {{paste.views}}</a></li>
+<li class="nav-item"><a class="nav-link disabled">Views: {{paste.views}}</a></li>
 {% if paste.expire %}
-<li><a>Expires: {{paste.expire|humanize}}</a></li>
+<li class="nav-item"><a class="nav-link disabled">Expires: {{paste.expire|humanize}}</a></li>
 {% else %}
-<li><a>Expires: Never</a></li>
+<li class="nav-item"><a class="nav-link disabled">Expires: Never</a></li>
 {% endif %}
 {% endblock %}
 {% block body %}
 
-<div class="row">
-    <div class="small-12 small-centered medium-10 medium-centered columns">
-        <div class="row small-collapse">
+    <div class="row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-10 ">
+            {{text|safe}}
+        </div>
+        <div class="col-lg-1"></div>
+    </div>
+<!-- <div class="row">
+    <div class="col">
+        <div class="row"></div>
+        
+        <div class="row">
             {% if not paste.language == "markdown" %}
-            <div class="small-1 end columns linenumbers"> 
+            <div class="col-sm-1 linenumbers"> 
             <pre class="text-right">{% for i in range(1, lines) %} {{i}} 
 {%endfor%}</pre></div>
             {% endif %}
-            <div class="small-11 columns">
-         	    {{text|safe}}
+            <div class="col-sm-11">
+                 {{text|safe}}
             </div>
     </div>
 </div>
-
+ -->
 {% endblock %}

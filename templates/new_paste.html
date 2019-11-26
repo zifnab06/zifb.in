@@ -1,45 +1,36 @@
 {% extends 'base.html' %}
-{% block topbar %}
-<li><a href="/about">About</a></li>
-<li><a href="/api">API</a></li>
-{% endblock %}
 {% block body %}
-<div class="pure-g-r">
-    <div class="pure-u-1-5"></div>
-    <div class="pure-u-3-5">
-        <form action="" method="post" class="pure-form">
-{#            {% for error_field in form.errors.values() %}
-            {%- for error in error_field %}
-            <div class="alert-box alert radius" data-alert>
-                {{ error }}
-                <a href="#" class="close">&times;</a>
+<div class="container-fluid">
+<div class="row">
+    <div class="col h-75">
+        <form action="" method="post">
+            <div class="form-group">
+            {{form.hidden_tag()}}
+            {{form.text(class="form-control", placeholder=form.text.label.text)}}
             </div>
-            {% endfor %}
-            {% endfor %}
-#}
-
-            {{ form.hidden_tag() }}
-            <div class="row small-collapse">
-                <div class="small-12 columns">
-                    {{ form.text(placeholder=form.text.label.text) }}
+            <div class="row justify-content-lg-center">
+                <div class="col col-lg-4 col-md-6 col-sm-12">
+                    <div class="for-mgroup">
+                        <label for="expiration">Expire In</label>
+                        {{ form.expiration(placeholder=form.expiration.label.text, class="w-100") }}
+                    </div>
+                </div>
+                <div class="col col-lg-4 col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label for="language">Language</label>
+                        {{form.language(placeholder=form.language.label.text, class="w-100") }}
+                    </div>
                 </div>
             </div>
-            <div class="row small-collapse">
-                <div class="small-12 medium-4 columns">
-                    {{ form.expiration(placeholder=form.expiration.label.text) }}
-                </div>
-                <div class="small-12 medium-4 columns">
-                    {{ form.language(placeholder=form.language.label.text) }}
-                </div>
-                <div class="small-12 medium-4 columns">
+            <br />
+            <div class="row justify-content-lg-center">
+                <div class="col col-lg-8">
+                    <button type="submit" class="btn btn-primary w-100">Paste</button>
                 </div>
             </div>
-            <div class="row small-collapse">
-                <div class="small-12 columns">
-                <button type="submit" class="button expand">Paste</button>
-            </div>
+        </div>
         </form>
     </div>
-    <div class="pure-u-1-5"></div>
+</div>
 </div>
 {% endblock %}

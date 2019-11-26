@@ -1,18 +1,9 @@
-html, body, #container {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-}
-body > #container {
-    height: auto;
-    min-height: 92%;
-}
 textarea {
-    height: 500px;
     font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
-
 }
-.footer {
+
+
+/* .footer {
     clear: both;
     position: relative;
     height: 1em;
@@ -21,6 +12,21 @@ textarea {
     text-align: center;
     padding: 1em;
     font-size: 80%;
+} */
+
+html, body, .container {
+    height: 100%;
+}
+
+textarea.form-control {
+    height: 60vh;
+}
+
+.lineno {
+    -webkit-user-select: none; /* Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
 }
 
 .linenumbers { background: #E3E3E3;}

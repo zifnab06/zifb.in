@@ -101,15 +101,15 @@ with app.app_context():
         expiration = SelectField(
             "Expiration",
             choices=[
-                ("0", "Expires Never"),
-                ("1", "Expires In Fifteen Minutes"),
-                ("2", "Expires In Thirty Minutes"),
-                ("3", "Expires In One Hour"),
-                ("4", "Expires In Six Hours"),
-                ("5", "Expires in Twelve Hours"),
-                ("6", "Expires In One Day"),
-                ("7", "Expires in One Week"),
-                ("8", "Expires in One Month"),
+                ("0", "Never"),
+                ("1", "Fifteen Minutes"),
+                ("2", "Thirty Minutes"),
+                ("3", "One Hour"),
+                ("4", "Six Hours"),
+                ("5", "Twelve Hours"),
+                ("6", "One Day"),
+                ("7", "One Week"),
+                ("8", "One Month"),
             ],
             default="6",
         )
@@ -120,14 +120,14 @@ with app.app_context():
         expiration = SelectField(
             "Expiration",
             choices=[
-                ("1", "Expires In Fifteen Minutes"),
-                ("2", "Expires In Thirty Minutes"),
-                ("3", "Expires In One Hour"),
-                ("4", "Expires In Six Hours"),
-                ("5", "Expires in Twelve Hours"),
-                ("6", "Expires In One Day"),
-                ("7", "Expires in One Week"),
-                ("8", "Expires in One Month"),
+                ("1", "Fifteen Minutes"),
+                ("2", "Thirty Minutes"),
+                ("3", "One Hour"),
+                ("4", "Six Hours"),
+                ("5", "Twelve Hours"),
+                ("6", "One Day"),
+                ("7", "One Week"),
+                ("8", "One Month"),
             ],
             default="6",
         )
@@ -267,7 +267,7 @@ with app.app_context():
             except pygments.util.ClassNotFound:
                 lexer = get_lexer_by_name("text")
 
-        format = pygments.formatters.HtmlFormatter()
+        format = pygments.formatters.HtmlFormatter(linenos='inline')
         return pygments.highlight(string, lexer, format)
 
     def render_paste(paste, title=None):

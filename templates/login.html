@@ -1,19 +1,35 @@
 {% extends 'base.html' %}
 {% block body %}
-<div class="row">
-    <div class="small-12 medium-8 medium-centered large-6 large-centered columns panel">
-        <h4>Log In</h4>
-        <hr>
-        <form action="" method="post">
-            {{ form.username(placeholder=form.username.label.text)}}
-            {{ form.password(placeholder=form.password.label.text)}}
-            <label class="checkbox"> {{form.remember() }} {{form.remember.label.text}}</label>
-            <button type="submit" class="button expand">Log In</button>
-        </form>
-        <br />
-        <label>Don't have an account? <a href="{{url_for('register')}}">Create one.</a></label>
-        {#<label>Forgot your password? <a href="{{url_for('pwreset')}}">Reset it.</a></label>#}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Log In</h5>
+                    <hr />
+                    <p class="card-text">
+                        <form action="" method="post">
+                            <div class="form-group">
+                                <label for="username">{{form.username.label.text}}</label>
+                                {{ form.username(class="form-control")}}
+                            </div>
+                            <div class="form-group">
+                                <label for="password">{{form.password.label.text}}</label>
+                                {{ form.password(class="form-control")}}
+                            </div>
+                            <div class="form-group">
+                                {{form.remember(class="") }} {{form.remember.label.text}}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Log In</button>
+                        </form>
+                    </p>
+                    <label>Don't have an account? <a href="{{url_for('register')}}">Create one.</a></label>
+                    {#<label>Forgot your password? <a href="{{url_for('pwreset')}}">Reset it.</a></label>#}
+        
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
 {% endblock %}

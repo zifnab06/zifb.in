@@ -24,7 +24,7 @@ from markdown2 import markdown
 from util import random_string
 
 import database
-import cgi
+import html
 import pendulum
 
 from hashlib import sha1
@@ -284,7 +284,7 @@ with app.app_context():
                 paste.language = "text"
             text = htmlify(text, paste.language)
         elif paste.language == "markdown":
-            text = markdown(cgi.escape(text.replace("!", "\\!")))
+            text = markdown(html.escape(text.replace("!", "\\!")))
         else:
             text = htmlify(text, paste.language)
         paste.views += 1

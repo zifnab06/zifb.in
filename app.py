@@ -14,6 +14,7 @@ from flask_login import (
     fresh_login_required,
 )
 from flask_wtf import FlaskForm
+from werkzeug.middleware.proxy_fix import ProxyFix
 from wtforms.fields import TextAreaField, SelectField, SubmitField
 from wtforms.validators import Required
 from datetime import datetime
@@ -32,6 +33,7 @@ from hashlib import sha1
 from werkzeug.routing import BaseConverter
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=1)
 
 
 class SHA1Converter(BaseConverter):
@@ -163,6 +165,8 @@ with app.app_context():
 
             if current_user.is_authenticated:
                 paste.user = current_user.to_dbref()
+            else:
+                paste.address = request.remote_addr
             # Create a name and make sure it doesn't exist
             paste.name = random_string()
             collision_check = database.Paste.objects(name__exact=paste.name).first()

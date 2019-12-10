@@ -45,6 +45,7 @@ class Paste(Document):
     user = ReferenceField(User, required=False)
     views = IntField(required=False, default=0)
     language = StringField(required=False)
+    address = StringField(required=False)
 
     def __str__(self):
         return self.name

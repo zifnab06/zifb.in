@@ -15,6 +15,7 @@ def paste():  # noqa: C901
     user = None
     expiration = None
     domain = "https://zifb.in/"
+    address = None
     try:
         data = json.loads(request.data)
     except ValueError:
@@ -32,6 +33,8 @@ def paste():  # noqa: C901
     # Get API_KEY/User
     if "api_key" in data:
         user = database.ApiKey.objects(key=data.get("api_key")).first().user
+    else:
+        address = request.remote_addr
 
     # Get Expiration
     if "expiration" in data:
@@ -62,6 +65,7 @@ def paste():  # noqa: C901
         expire=expiration,
         user=user,
         language=language,
+        address=address,
     )
     paste.name = random_string()
     while database.Paste.objects(name=paste.name).first():

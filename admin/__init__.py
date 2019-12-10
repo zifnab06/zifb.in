@@ -6,7 +6,7 @@ from flask_admin.contrib.mongoengine import ModelView
 
 
 def is_admin():
-    if current_user.is_anonymous:
+    if current_user.is_anonymous():
         abort(403)
     else:
         return current_user.admin

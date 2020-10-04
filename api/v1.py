@@ -72,9 +72,13 @@ def paste():  # noqa: C901
         paste.name = random_string()
 
     paste.save()
-    return json.dumps(
-        {
-            "paste": "{0}{1}".format(domain, paste.name),
-            "expires": pendulum.instance(paste.expire).to_datetime_string(),
-        }
-    )
+
+    returnbody = {}
+    returnbody["paste"] = "{0}{1}".format(domain, paste.name)
+
+    if paste.expire is not None:
+        returnbody["expires"] = pendulum.instance(paste.expire).to_datetime_string()
+    else:
+        returnbody["expires"] = "0"
+
+    return json.dumps(returnbody)

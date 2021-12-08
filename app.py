@@ -96,7 +96,10 @@ with app.app_context():
         yield ("none", "Automatically Detect")
         yield ("markdown", "markdown")
         for lexer in sorted(get_all_lexers()):
-            yield (lexer[1][0], lexer[0])
+            try:
+                yield (lexer[1][0], lexer[0])
+            except IndexError:
+                pass
 
     class PasteForm(FlaskForm):
         text = TextAreaField("Paste Here", validators=[Required()])

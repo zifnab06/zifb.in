@@ -1,0 +1,22 @@
+FROM golang:1.17 as overmind
+RUN GO111MODULE=on go get -u github.com/DarthSim/overmind/v2
+
+FROM ubuntu:20.04
+COPY --from=overmind /go/bin/overmind /usr/local/bin/overmind
+
+RUN apt update && \
+    apt install -y --no-install-recommends python3 python3-pip curl gnupg2 tmux && \
+    curl -sL https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add - && \
+    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list && \
+    apt update && \
+    apt install -y mongodb-org
+
+WORKDIR /app
+
+COPY requirements.txt /app
+
+RUN pip install -r requirements.txt
+
+COPY . /app
+
+CMD overmind start

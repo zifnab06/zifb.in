@@ -10,7 +10,7 @@ Flask-WTF==0.14.2
 gunicorn==20.0.2
 itsdangerous==1.1.0
 Jinja2==2.10.3
-markdown2==2.3.8
+markdown2==2.4.0
 MarkupSafe==1.1.1
 mongoengine==0.18.2
 passlib==1.7.2

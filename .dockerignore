@@ -4,3 +4,9 @@
 #
 
 *.env
+*.md
+*.toml
+*.yaml
+.dockerignore
+.gitignore
+setup.cfg

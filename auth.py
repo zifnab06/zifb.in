@@ -11,7 +11,7 @@ from flask_wtf import FlaskForm, RecaptchaField
 from database import User
 
 from wtforms.fields import StringField, BooleanField, PasswordField
-from wtforms.validators import Required, Length, EqualTo, Email
+from wtforms.validators import DataRequired, Length, EqualTo, Email
 from util import authenticate_user, create_user, lookup_user
 
 login_manager = LoginManager(app)
@@ -30,13 +30,13 @@ class AuthForm(FlaskForm):
     username = StringField(
         "Username*",
         validators=[
-            Required(message="Please enter your username"),
+            DataRequired(message="Please enter your username"),
             Length(min=3, max=16),
         ],
     )
     password = PasswordField(
         "Password*",
-        validators=[Required(message="Please enter your password"), Length(min=8)],
+        validators=[DataRequired(message="Please enter your password"), Length(min=8)],
     )
     remember = BooleanField("Remember Account?", validators=[], default=True)
 
@@ -57,7 +57,7 @@ class AuthForm(FlaskForm):
 class ReAuthForm(FlaskForm):
     password = PasswordField(
         "Password*",
-        validators=[Required(message="Please enter your password"), Length(min=8)],
+        validators=[DataRequired(message="Please enter your password"), Length(min=8)],
     )
 
     def validate(self):
@@ -74,18 +74,21 @@ class RegForm(FlaskForm):
     username = StringField(
         "Username*",
         validators=[
-            Required(message="Please enter your username"),
+            DataRequired(message="Please enter your username"),
             Length(min=3, max=16),
         ],
     )
     email = StringField("Email", validators=[Email()])
     password = PasswordField(
         "Password*",
-        validators=[Required(message="Please enter your password"), Length(min=8)],
+        validators=[DataRequired(message="Please enter your password"), Length(min=8)],
     )
     password2 = PasswordField(
         "Repeat Password*",
-        validators=[EqualTo("password", message="Passwords do not match"), Required()],
+        validators=[
+            EqualTo("password", message="Passwords do not match"),
+            DataRequired(),
+        ],
     )
 
     recaptcha = RecaptchaField()

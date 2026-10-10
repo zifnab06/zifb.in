@@ -1,0 +1,34 @@
+#
+# docker-compose.yaml
+# zifnab06/zifb.in
+#
+
+services:
+  webapp:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - MONGODB_HOST=mongodb
+    depends_on:
+      - mongodb
+    networks:
+      - pastebin
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=zifbin
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - pastebin
+
+volumes:
+  mongodb_data:
+
+networks:
+  pastebin:
+    driver: bridge

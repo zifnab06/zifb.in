@@ -1,0 +1,12 @@
+#
+# .dockerignore
+# zifnab06/zifb.in
+#
+
+*.env
+*.md
+*.toml
+*.yaml
+.dockerignore
+.gitignore
+setup.cfg

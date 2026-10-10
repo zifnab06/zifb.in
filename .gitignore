@@ -6,3 +6,4 @@ include/
 .Python
 pip-selfcheck.json
 .python-version
+*.env
